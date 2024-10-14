@@ -119,7 +119,7 @@ class SurchargeCalculatorTest {
     }
 
     @Test
-    public void testMixedOvertime() {
+    public void testMixedSurcharges() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 15, 18, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 16, 2, 0);
 
@@ -159,7 +159,7 @@ class SurchargeCalculatorTest {
     }
 
     @Test
-    public void testMixedOvertime2() {
+    public void testMixedSurcharges2() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 15, 20, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 16, 4, 0);
 

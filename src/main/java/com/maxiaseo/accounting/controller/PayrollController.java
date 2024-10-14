@@ -36,9 +36,12 @@ public class PayrollController {
     }
 
     @GetMapping("/processed-info")
-    public ResponseEntity<List<Employee>> handleFileUpload() throws IOException {
+    public ResponseEntity<List<Employee>> handleFileUpload(
+            @RequestParam("year") Integer year,
+            @RequestParam("month") Integer month,
+            @RequestParam("day") Integer day) throws IOException {
 
-        List<Employee>  result = payrollServices.handleFileUpload(tempFile);
+        List<Employee>  result = payrollServices.handleFileUpload(tempFile,year, month, day);
 
         return ResponseEntity.ok(result);
     }
@@ -54,7 +57,7 @@ public class PayrollController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/delete")
+    @DeleteMapping("/delete")
     public String deleteFile() {
         if (tempFile != null) {
             payrollServices.deleteTemporaryFile(tempFile);
@@ -72,6 +75,8 @@ public class PayrollController {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             headers.setContentDispositionFormData("attachment", tempFile.getName());
+
+            payrollServices.deleteTemporaryFile(tempFile);
 
             return ResponseEntity.ok()
                     .headers(headers)

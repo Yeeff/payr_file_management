@@ -11,8 +11,12 @@ import java.util.List;
 public class SurchargeCalculator {
 
     // Constants for defining night hours (e.g., 10 PM to 6 AM)
-    private static final LocalTime NIGHT_START = LocalTime.of(21, 0); // 10 PM
-    private static final LocalTime NIGHT_END = LocalTime.of(6, 0); // 6 AM
+    private static final LocalTime NIGHT_START = LocalTime.of(21, 0);
+    private static final LocalTime NIGHT_END = LocalTime.of(6, 0);
+
+    private static final Long MAX_HOURS_BY_DAY = 8L;
+
+    private static final Long FIRST_HOUR_WORKED = 1L;
 
     public static List<Surcharge> getSurchargeList(LocalDateTime start, LocalDateTime end) {
 
@@ -22,7 +26,7 @@ public class SurchargeCalculator {
         Surcharge surchargeHoliday = Surcharge.builder().quantityOfHours(0L).build();
         Surcharge surchargeHolidayNight = Surcharge.builder().quantityOfHours(0L).build();
 
-        LocalDateTime current = start.plusHours(1);
+        LocalDateTime current = start.plusHours(FIRST_HOUR_WORKED);
 
         while (current.isBefore(end) || current.isEqual(end)) {
 
@@ -36,7 +40,7 @@ public class SurchargeCalculator {
                 surchargeHolidayNight =increaseOneHourSurcharge(surchargeHolidayNight, current, SurchargeTypeEnum.NIGHT_HOLIDAY);
             }
 
-            LocalDateTime maxTimeToCheckSurcharges = start.plusHours(8);
+            LocalDateTime maxTimeToCheckSurcharges = start.plusHours(MAX_HOURS_BY_DAY );
             if(maxTimeToCheckSurcharges.isEqual(current)) break;
 
             current = current.plusHours(1);
