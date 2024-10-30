@@ -1,6 +1,5 @@
-package com.maxiaseo.accounting.domain;
+package com.maxiaseo.accounting.domain.model;
 
-import com.maxiaseo.accounting.utils.OvertimeCalculator;
 import com.maxiaseo.accounting.utils.OvertimeSurchargeTypeEnum;
 import com.maxiaseo.accounting.utils.OvertimeTypeEnum;
 import com.maxiaseo.accounting.utils.SurchargeTypeEnum;

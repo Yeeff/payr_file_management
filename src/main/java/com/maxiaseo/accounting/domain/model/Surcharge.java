@@ -1,4 +1,4 @@
-package com.maxiaseo.accounting.domain;
+package com.maxiaseo.accounting.domain.model;
 
 import com.maxiaseo.accounting.utils.SurchargeTypeEnum;
 import lombok.*;

@@ -1,6 +1,6 @@
 package com.maxiaseo.accounting.utils;
 
-import com.maxiaseo.accounting.domain.OvertimeSurcharge;
+import com.maxiaseo.accounting.domain.model.OvertimeSurcharge;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;

@@ -1,24 +1,18 @@
 package com.maxiaseo.accounting.controller;
 
-import com.maxiaseo.accounting.domain.Employee;
+import com.maxiaseo.accounting.domain.model.Employee;
 import com.maxiaseo.accounting.services.PayrollServices;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Map;
 
@@ -48,10 +42,10 @@ public class PayrollController {
 
     @PostMapping("/upload-excel")
     public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-        tempFile = payrollServices.saveTemporaryFile(file);
+        tempFile = payrollServices.saveFile(file);
 
         Map<String, String> response = new HashMap<>();
-        response.put("message", "File uploaded and stored temporarily.");
+        response.put("message", "El archivo se subio satisfactoriamente");
         response.put("name", tempFile.getName());
 
         return ResponseEntity.ok(response);

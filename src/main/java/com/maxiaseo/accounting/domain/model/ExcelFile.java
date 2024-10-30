@@ -1,4 +1,4 @@
-package com.maxiaseo.accounting.domain;
+package com.maxiaseo.accounting.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

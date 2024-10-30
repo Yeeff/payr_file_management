@@ -1,7 +1,6 @@
 package com.maxiaseo.accounting.utils;
 
-import com.maxiaseo.accounting.domain.Overtime;
-import com.maxiaseo.accounting.domain.Surcharge;
+import com.maxiaseo.accounting.domain.model.Overtime;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

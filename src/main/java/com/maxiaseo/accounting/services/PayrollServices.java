@@ -1,30 +1,23 @@
 package com.maxiaseo.accounting.services;
 
-import com.maxiaseo.accounting.domain.Employee;
-import com.maxiaseo.accounting.domain.Overtime;
-import com.maxiaseo.accounting.domain.OvertimeSurcharge;
-import com.maxiaseo.accounting.domain.Surcharge;
-import com.maxiaseo.accounting.utils.CellsValidator;
-import com.maxiaseo.accounting.utils.OvertimeCalculator;
-import com.maxiaseo.accounting.utils.OvertimeSurchargeCalculator;
-import com.maxiaseo.accounting.utils.SurchargeCalculator;
-import lombok.extern.java.Log;
+import com.maxiaseo.accounting.domain.exception.IncorrectFormatExcelValuesException;
+import com.maxiaseo.accounting.domain.model.Employee;
+import com.maxiaseo.accounting.domain.model.Overtime;
+import com.maxiaseo.accounting.domain.model.OvertimeSurcharge;
+import com.maxiaseo.accounting.domain.model.Surcharge;
+import com.maxiaseo.accounting.utils.*;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.rmi.RemoteException;
+import java.io.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+
+import static com.maxiaseo.accounting.configuration.Constants.*;
 
 @Service
 public class PayrollServices {
@@ -59,7 +52,7 @@ public class PayrollServices {
 
         List<Employee> employees = new ArrayList<>();
 
-        for (int i = 2; i <= sheet.getLastRowNum(); i++) {
+        for (int i = FIRST_ROW_WITH_VALID_DATA_INDEX; i <= sheet.getLastRowNum(); i++) {
 
             Employee employee = Employee.builder()
                     .surcharges(new ArrayList<>())
@@ -72,21 +65,16 @@ public class PayrollServices {
             if (row != null) {
 
                 try{
-                    employee.setId( Long.valueOf(getCellValueAsString(row.getCell(1))));
-                    employee.setName(getCellValueAsString(row.getCell(2)));
+                    employee.setId( Long.valueOf(CellsValidator.getCellValueAsString(row.getCell(EMPLOYEE_DOCUMENT_ID_INDEX))));
+                    employee.setName(CellsValidator.getCellValueAsString(row.getCell(EMPLOYEE_NAME_INDEX)));
                 }catch (Exception e){
                     break;
                 }
 
-                for (int j = 3; j < row.getLastCellNum(); j++) {
+                for (int j = FIRST_COLUM_WITH_VALID_DATA_INDEX; j < row.getLastCellNum(); j++) {
                     Cell cell = row.getCell(j);
                     if (cell != null) {
-                        String cellValue = getCellValueAsString(cell);
-
-                        int x=1;
-                        if(i==36){
-                            x=8;
-                        }
+                        String cellValue = CellsValidator.getCellValueAsString(cell);
 
                         if (CellsValidator.isValidTimeRange(cellValue)){
                             employee = processSchedule( cellValue, currentDate, employee);
@@ -147,6 +135,127 @@ public class PayrollServices {
         return employees;
     }
 
+    public  File saveFile(MultipartFile file) throws IOException {
+
+        Workbook workbook;
+        Sheet sheet = null;
+        Map<String, String> errorsMap = new HashMap<>();
+
+        Boolean blankLineFound = false;
+
+        LocalDate initDateOfFortnight = LocalDate.of(2024,9, 1);
+        LocalDate currentDate;
+
+        if (!file.getOriginalFilename().endsWith(".xls") && !file.getOriginalFilename().endsWith(".xlsx")) {
+            throw new IllegalArgumentException("The specified file is not an Excel file");
+        }
+
+        try {
+            InputStream fis = file.getInputStream();
+
+            workbook = WorkbookFactory.create(fis);
+
+            sheet = workbook.getSheetAt(0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        for (int i = FIRST_ROW_WITH_VALID_DATA_INDEX; i <= sheet.getLastRowNum(); i++) {
+
+            currentDate = initDateOfFortnight;
+
+            Row row = sheet.getRow(i);
+            if (row != null) {
+
+                if(CellsValidator.getCellValueAsString(row.getCell(0)) == "")
+                    if(CellsValidator.isAEmptyLine(row)){
+                        blankLineFound = true;
+                        break;
+                    }
+
+                String employeeName = CellsValidator.getCellValueAsString(row.getCell(EMPLOYEE_NAME_INDEX));
+                if(employeeName == ""){
+                    errorsMap.put(CellsValidator.getExcelCoordinate(i,EMPLOYEE_NAME_INDEX)
+                            , String.format("El campo nombre no puede estar vacio."));
+                }
+
+                String employeeDocumentId = CellsValidator.getCellValueAsString(row.getCell(EMPLOYEE_DOCUMENT_ID_INDEX));
+                if(!CellsValidator.isANumber(employeeDocumentId)){
+                    errorsMap.put( CellsValidator.getExcelCoordinate(i,EMPLOYEE_DOCUMENT_ID_INDEX),
+                            String.format("El valor '%s' no es válido como numero de identificacion del empleado.",
+                            employeeDocumentId
+                    ));
+                }
+
+                for (int j = FIRST_COLUM_WITH_VALID_DATA_INDEX; j < row.getLastCellNum(); j++) {
+
+                    Cell cell = row.getCell(j);
+                    String cellValue = CellsValidator.getCellValueAsString(cell);
+
+                    if(initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_FIRST_FORTNIGHT){
+                        if(currentDate.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT){
+                            if(cellValue != ""){
+                                errorsMap.put(i + "," + j, String.format("El ultimo dia la quincena debe ser 15 pero después de esa columana se encontro el valor: %s",
+                                        cellValue
+                                ));
+                            }
+                            break;
+                        }
+
+                    } else if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT) {
+
+                        Integer nextMoth = initDateOfFortnight.plusMonths(1).getDayOfMonth();
+                        if(currentDate.getDayOfMonth() == nextMoth ){
+
+                            if(cellValue != ""){
+                                errorsMap.put(i + "," + j, String.format("El ultimo dia de %s es %s pero después de esa columana se encontro el valor: %s",
+                                        initDateOfFortnight.getMonth(),
+                                        initDateOfFortnight.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth(),
+                                        cellValue
+                                ));
+                            }
+                            break;
+                        }
+                    }
+
+
+                    if (!CellsValidator.isValidTimeRange(cellValue) && !CellsValidator.isValidAbsenceReasons(cellValue)) {
+                        errorsMap.put(i + "," + j, String.format("-> " +cellValue + " <- no, es un valor valido",
+                                initDateOfFortnight.getMonth(),
+                                initDateOfFortnight.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth(),
+                                cellValue
+                        ));
+                    }
+
+                    currentDate =currentDate.plusDays(1);
+                }
+            }
+
+            if(blankLineFound)
+                break;
+
+        }
+        if( ! errorsMap.isEmpty())
+            throw new IncorrectFormatExcelValuesException(errorsMap.toString());
+
+        return FileAdministrator.saveTemporaryFile(file);
+
+    }
+
+    //--
+    public File getProcessedFile(File tempFile) {
+        return tempFile.exists() ? tempFile : null;
+    }
+    //--
+    public void deleteTemporaryFile(File tempFile) {
+        if (tempFile.exists()) {
+            tempFile.delete();  // Remove the file from the temporary location
+        }
+    }
+
+
+
     private Employee processSchedule( String schedule, LocalDate date,Employee employee) {
 
         String[] times = schedule.split(" a");
@@ -197,59 +306,5 @@ public class PayrollServices {
         return LocalDateTime.of(date, time);
 
     }
-
-    public String getCellValueAsString(Cell cell) {
-        if (cell == null) {
-            return "";
-        }
-
-        CellType cellType = cell.getCellType();
-
-        switch (cellType) {
-            case STRING:
-                return cell.getStringCellValue().trim();
-            case NUMERIC:
-
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    return cell.getDateCellValue().toString();
-                } else {
-                    // Use BigDecimal to avoid scientific notation for large numbers
-                    BigDecimal bd = BigDecimal.valueOf(cell.getNumericCellValue());
-                    return bd.setScale(0, RoundingMode.HALF_UP).toPlainString(); // Return the plain string representation
-                }
-            case BOOLEAN:
-                return String.valueOf(cell.getBooleanCellValue());
-            case FORMULA:
-                return String.valueOf(cell.getNumericCellValue());
-            default:
-                return "";
-        }
-    }
-
-    public File saveTemporaryFile(MultipartFile file) throws IOException {
-        // Create a unique temp file in the default temporary directory
-        File tempFile = File.createTempFile("uploaded-", file.getOriginalFilename());
-
-        // Write the uploaded file content to the temp file
-        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-            fos.write(file.getBytes());
-        }
-
-        return tempFile;  // Return the temp file reference for later use
-    }
-
-    // Method to retrieve the processed file (if needed)
-    public File getProcessedFile(File tempFile) {
-        return tempFile.exists() ? tempFile : null;
-    }
-
-    // Delete the temporary file after it's no longer needed
-    public void deleteTemporaryFile(File tempFile) {
-        if (tempFile.exists()) {
-            tempFile.delete();  // Remove the file from the temporary location
-        }
-    }
-
-
 
 }

@@ -1,24 +1,38 @@
 package com.maxiaseo.accounting.utils;
 
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class FileAdministrator {
 
-    // Save the file temporarily on the disk
-    public File saveTemporaryFile(MultipartFile file) throws IOException {
-        // Create a unique temp file in the default temporary directory
+    public static File saveTemporaryFile(MultipartFile file) throws IOException {
         File tempFile = File.createTempFile("uploaded-", file.getOriginalFilename());
 
-        // Write the uploaded file content to the temp file
         try (FileOutputStream fos = new FileOutputStream(tempFile)) {
             fos.write(file.getBytes());
         }
 
-        return tempFile;  // Return the temp file reference for later use
+        return tempFile;
+    }
+
+    public static Workbook getworkbook(File tempFile) throws IOException {
+        Workbook workbook;
+        if (tempFile != null && tempFile.exists()) {
+            try (FileInputStream fis = new FileInputStream(tempFile)) {
+                workbook = WorkbookFactory.create(fis);
+            } catch (IOException e) {
+                throw new IOException("Failed to create a Workbook from the file", e);
+            }
+        } else {
+            throw new IOException("Temporary file does not exist.");
+        }
+        return workbook;
     }
 
     // Method to retrieve the processed file (if needed)

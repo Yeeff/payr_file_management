@@ -1,6 +1,6 @@
-package com.maxiaseo.accounting.domain;
+package com.maxiaseo.accounting.domain.model;
 
-import com.maxiaseo.accounting.utils.OvertimeTypeEnum;
+import com.maxiaseo.accounting.utils.OvertimeSurchargeTypeEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class Overtime {
+public class OvertimeSurcharge {
     private LocalDateTime start;
     private LocalDateTime end;
     private Long quantityOfHours;
-    private OvertimeTypeEnum overtimeTypeEnum;
+    private OvertimeSurchargeTypeEnum overtimeSurchargeTypeEnum;
 
     public void increaseOneHour(){
         quantityOfHours++;
