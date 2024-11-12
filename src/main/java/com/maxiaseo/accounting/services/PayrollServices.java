@@ -182,7 +182,7 @@ public class PayrollServices {
 
                 String employeeDocumentId = CellsValidator.getCellValueAsString(row.getCell(EMPLOYEE_DOCUMENT_ID_INDEX));
                 if(!CellsValidator.isANumber(employeeDocumentId)){
-                    errorsMap.put( CellsValidator.getExcelCoordinate(i,EMPLOYEE_DOCUMENT_ID_INDEX),
+                    errorsMap.put( CellsValidator.getExcelCoordinate(i, EMPLOYEE_DOCUMENT_ID_INDEX),
                             String.format("El valor '%s' no es válido como numero de identificacion del empleado.",
                             employeeDocumentId
                     ));
@@ -196,7 +196,8 @@ public class PayrollServices {
                     if(initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_FIRST_FORTNIGHT){
                         if(currentDate.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT){
                             if(cellValue != ""){
-                                errorsMap.put(i + "," + j, String.format("El ultimo dia la quincena debe ser 15 pero después de esa columana se encontro el valor: %s",
+                                errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
+                                        String.format("El ultimo dia la quincena debe ser 15 pero después de esa columana se encontro el valor: %s",
                                         cellValue
                                 ));
                             }
@@ -209,7 +210,8 @@ public class PayrollServices {
                         if(currentDate.getDayOfMonth() == nextMoth ){
 
                             if(cellValue != ""){
-                                errorsMap.put(i + "," + j, String.format("El ultimo dia de %s es %s pero después de esa columana se encontro el valor: %s",
+                                errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
+                                        String.format("El ultimo dia de %s es %s pero después de esa columana se encontro el valor: %s",
                                         initDateOfFortnight.getMonth(),
                                         initDateOfFortnight.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth(),
                                         cellValue
@@ -221,7 +223,8 @@ public class PayrollServices {
 
 
                     if (!CellsValidator.isValidTimeRange(cellValue) && !CellsValidator.isValidAbsenceReasons(cellValue)) {
-                        errorsMap.put(i + "," + j, String.format("-> " +cellValue + " <- no, es un valor valido",
+                        errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
+                                String.format("-> " +cellValue + " <- no, es un valor valido",
                                 initDateOfFortnight.getMonth(),
                                 initDateOfFortnight.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth(),
                                 cellValue
@@ -237,7 +240,7 @@ public class PayrollServices {
 
         }
         if( ! errorsMap.isEmpty())
-            throw new IncorrectFormatExcelValuesException(errorsMap.toString());
+            throw new IncorrectFormatExcelValuesException("", errorsMap);
 
         return FileAdministrator.saveTemporaryFile(file);
 

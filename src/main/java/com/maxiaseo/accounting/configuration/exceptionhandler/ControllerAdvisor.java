@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 public class ControllerAdvisor {
 
     @ExceptionHandler(IncorrectFormatExcelValuesException.class)
-    public ResponseEntity<ExceptionResponse> IncorrectFormatExcelValuesExceptionHandler(IncorrectFormatExcelValuesException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponse(
-                exception.getMessage(), HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
+    public ResponseEntity<ExceptionResponseList> IncorrectFormatExcelValuesExceptionHandler(IncorrectFormatExcelValuesException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponseList(
+                ex.getMessage(), ex.getItems() , HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
     }
 }
