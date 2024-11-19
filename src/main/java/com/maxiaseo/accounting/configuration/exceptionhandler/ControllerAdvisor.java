@@ -15,7 +15,7 @@ public class ControllerAdvisor {
 
     @ExceptionHandler(IncorrectFormatExcelValuesException.class)
     public ResponseEntity<ExceptionResponseList> IncorrectFormatExcelValuesExceptionHandler(IncorrectFormatExcelValuesException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionResponseList(
-                ex.getMessage(), ex.getItems() , HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new ExceptionResponseList(
+                ex.getMessage(), ex.getItems() , HttpStatus.UNPROCESSABLE_ENTITY.toString(), LocalDateTime.now()));
     }
 }
