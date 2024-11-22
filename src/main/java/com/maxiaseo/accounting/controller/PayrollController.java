@@ -41,8 +41,13 @@ public class PayrollController {
     }
 
     @PostMapping("/upload-excel")
-    public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-        tempFile = payrollServices.saveFile(file);
+    public ResponseEntity<Map<String, String>> uploadFile(
+            @RequestParam("year") Integer year,
+            @RequestParam("month") Integer month,
+            @RequestParam("day") Integer day,
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+        tempFile = payrollServices.saveFile(file,year, month, day);
 
         Map<String, String> response = new HashMap<>();
         response.put("message", "El archivo se subio satisfactoriamente");

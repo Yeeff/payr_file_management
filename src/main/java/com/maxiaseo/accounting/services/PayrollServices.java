@@ -30,6 +30,7 @@ public class PayrollServices {
         this.hoursWorkedPerWeek = 0L;
     }
 
+
     public List<Employee> handleFileUpload( File tempFile, Integer year, Integer month, Integer initDay) throws IOException {
         Workbook workbook;
 
@@ -93,37 +94,49 @@ public class PayrollServices {
             if(!employee.getSurcharges().isEmpty()) employees.add(employee);
 
             //---------------------------------------------------
-            Cell totalHoldaytSurchargeCell = row.createCell(24);
-            totalHoldaytSurchargeCell.setCellValue(employee.getTotalHolidaySurchargeHours());
-
-            Cell totalNightSurchargeCell = row.createCell(27);
-            totalNightSurchargeCell.setCellValue(employee.getTotalNightSurchargeHours());
-
-            Cell totalNighHolidaytSurchargeCell = row.createCell(28);
-            totalNighHolidaytSurchargeCell.setCellValue(employee.getTotalNightHolidaySurchargeHours());
-
-
-            Cell totalDayOvertimeCell = row.createCell(20);
+            Cell totalDayOvertimeCell = row.createCell(19);
             totalDayOvertimeCell.setCellValue(employee.getTotalDayOvertimeHours());
 
-            Cell totalHoldaytOvertimeCell = row.createCell(22);
+            Cell totalHoldaytOvertimeCell = row.createCell(20);
             totalHoldaytOvertimeCell.setCellValue(employee.getTotalHolidayOvertimeHours());
 
             Cell totalNightOvertimeCell = row.createCell(21);
             totalNightOvertimeCell.setCellValue(employee.getTotalNightOvertimeHours());
 
-            Cell totalNighHolidaytOvertimeCell = row.createCell(23);
+            Cell totalNighHolidaytOvertimeCell = row.createCell(22);
             totalNighHolidaytOvertimeCell.setCellValue(employee.getTotalNightHolidayOvertimeHours());
 
 
-            Cell totalHolidayOvertimeSurchargeCell = row.createCell(25);
+            Cell totalHoldaytSurchargeCell = row.createCell(23);
+            totalHoldaytSurchargeCell.setCellValue(employee.getTotalHolidaySurchargeHours());
+
+            Cell totalNightSurchargeCell = row.createCell(24);
+            totalNightSurchargeCell.setCellValue(employee.getTotalNightSurchargeHours());
+
+            Cell totalNighHolidaytSurchargeCell = row.createCell(25);
+            totalNighHolidaytSurchargeCell.setCellValue(employee.getTotalNightHolidaySurchargeHours());
+
+
+            Cell totalHolidayOvertimeSurchargeCell = row.createCell(26);
             totalHolidayOvertimeSurchargeCell.setCellValue(employee.getTotalHolidayOvertimeSurchargeHours());
 
-            Cell totalNighHolidaytOvertimeSurchargeCell = row.createCell(26);
+            Cell totalNighHolidaytOvertimeSurchargeCell = row.createCell(27);
             totalNighHolidaytOvertimeSurchargeCell.setCellValue(employee.getTotalNightHolidayOvertimeSurchargeHours());
             //---------------------------------------------------
 
         }
+
+        Row row = sheet.getRow(0);
+
+        row.createCell(19).setCellValue("HED");
+        row.createCell(20).setCellValue("HEF");
+        row.createCell(21).setCellValue("HEN");
+        row.createCell(22).setCellValue("HEFN");
+        row.createCell(23).setCellValue("HRF");
+        row.createCell(24).setCellValue("HRN");
+        row.createCell(25).setCellValue("HRNF");
+        row.createCell(26).setCellValue("HERF");
+        row.createCell(27).setCellValue("HERFN");
 
         //---------------------------------------------------
         try (FileOutputStream fos = new FileOutputStream(tempFile)) {
@@ -135,7 +148,7 @@ public class PayrollServices {
         return employees;
     }
 
-    public  File saveFile(MultipartFile file) throws IOException {
+    public  File saveFile(MultipartFile file,Integer year,Integer month,Integer day) throws IOException {
 
         Workbook workbook;
         Sheet sheet = null;
@@ -143,7 +156,7 @@ public class PayrollServices {
 
         Boolean blankLineFound = false;
 
-        LocalDate initDateOfFortnight = LocalDate.of(2024,9, 1);
+        LocalDate initDateOfFortnight = LocalDate.of(year,month, day);
         LocalDate currentDate;
 
         if (!file.getOriginalFilename().endsWith(".xls") && !file.getOriginalFilename().endsWith(".xlsx")) {
@@ -268,21 +281,21 @@ public class PayrollServices {
         if(endTime.isBefore(startTime))
             endTime = endTime.plusDays(1);
 
-        if(hoursWorkedPerWeek >= MAX_HOURS_BY_WEEK && startTime.getDayOfWeek() == DayOfWeek.SUNDAY ){
-            for ( OvertimeSurcharge overtimeSurcharge : OvertimeSurchargeCalculator.getOvertimeSurchargeList(startTime, endTime) ){
-                if(overtimeSurcharge.getQuantityOfHours() != 0){
+        if (hoursWorkedPerWeek >= MAX_HOURS_BY_WEEK && startTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
+            for (OvertimeSurcharge overtimeSurcharge : OvertimeSurchargeCalculator.getOvertimeSurchargeList(startTime, endTime)) {
+                if (overtimeSurcharge.getQuantityOfHours() != 0) {
                     employee.addNewOverTimeSurcharge(overtimeSurcharge);
                 }
             }
-        }else{
-            for ( Surcharge surcharge : SurchargeCalculator.getSurchargeList(startTime, endTime) ){
-                if(surcharge.getQuantityOfHours() != 0){
+        } else {
+            for (Surcharge surcharge : SurchargeCalculator.getSurchargeList(startTime, endTime)) {
+                if (surcharge.getQuantityOfHours() != 0) {
                     employee.addNewSurcharge(surcharge);
                 }
             }
 
-            for ( Overtime overtime : OvertimeCalculator.getOvertimeList(startTime, endTime) ){
-                if(overtime.getQuantityOfHours() != 0){
+            for (Overtime overtime : OvertimeCalculator.getOvertimeList(startTime, endTime)) {
+                if (overtime.getQuantityOfHours() != 0) {
                     employee.addNewOverTime(overtime);
                 }
             }
