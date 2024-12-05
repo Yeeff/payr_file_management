@@ -1,14 +1,13 @@
-package com.maxiaseo.accounting.utils;
+package com.maxiaseo.accounting.domain.util;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 
-import javax.swing.text.StyledEditorKit;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.security.PublicKey;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,13 +48,31 @@ public class CellsValidator {
         return VALID_CODES.contains(value.trim());
     }
 
-    public static boolean isAEmptyLine(Row row){
+    public static boolean isAEmptyLinex(Row row){
 
         Integer blankCellsCounter = 0;
         Boolean isBlankLine = false;
 
         for (int i = 0; i < row.getLastCellNum(); i++) {
             if( getCellValueAsString(row.getCell(i))  == "" ){
+                blankCellsCounter++;
+            }else{
+                break;
+            }
+            if ( blankCellsCounter >= NUM_OF_DAYS_IN_A_FORTNIGHT){
+                isBlankLine = true;
+            }
+        }
+
+        return isBlankLine;
+    }
+    public static boolean isAEmptyLine(List rowDataList){
+
+        Integer blankCellsCounter = 0;
+        Boolean isBlankLine = false;
+
+        for (int i = 0; i < rowDataList.size(); i++) {
+            if( rowDataList.get(i)  == "" ){
                 blankCellsCounter++;
             }else{
                 break;

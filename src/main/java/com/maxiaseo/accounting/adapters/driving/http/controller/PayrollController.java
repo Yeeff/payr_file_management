@@ -1,7 +1,9 @@
-package com.maxiaseo.accounting.controller;
+package com.maxiaseo.accounting.adapters.driving.http.controller;
 
+import com.maxiaseo.accounting.adapters.driving.http.mapper.ExcelMapper;
 import com.maxiaseo.accounting.domain.model.Employee;
 import com.maxiaseo.accounting.services.PayrollServices;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +20,14 @@ import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
+@RequiredArgsConstructor
 public class PayrollController {
 
-    PayrollServices payrollServices;
+    private final PayrollServices payrollServices;
+    private final ExcelMapper excelMapper;
 
     private File tempFile; // Store reference to the temp file
 
-
-    public PayrollController(PayrollServices payrollServices) {
-        this.payrollServices = payrollServices;
-    }
 
     @GetMapping("/processed-info")
     public ResponseEntity<List<Employee>> handleFileUpload(
@@ -35,7 +35,7 @@ public class PayrollController {
             @RequestParam("month") Integer month,
             @RequestParam("day") Integer day) throws IOException {
 
-        List<Employee>  result = payrollServices.handleFileUpload(tempFile,year, month, day);
+        List<Employee>  result = payrollServices.handleFileUpload(tempFile.getName() ,year, month, day);
 
         return ResponseEntity.ok(result);
     }
@@ -46,8 +46,11 @@ public class PayrollController {
             @RequestParam("month") Integer month,
             @RequestParam("day") Integer day,
             @RequestParam("file") MultipartFile file
-    ) throws IOException {
-        tempFile = payrollServices.saveFile(file,year, month, day);
+    ) throws IOException  {
+
+        tempFile = payrollServices.saveFile(
+                excelMapper.fileExcelToInputstream(file)
+                ,year, month, day);
 
         Map<String, String> response = new HashMap<>();
         response.put("message", "El archivo se subio satisfactoriamente");
