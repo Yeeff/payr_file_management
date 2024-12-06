@@ -53,17 +53,14 @@ public class Employee {
 
     public Long getTotalNightOvertimeHours() {
         return getSumOfOvertimeHoursByType(OvertimeTypeEnum.NIGHT);
-
     }
 
     public Long getTotalHolidayOvertimeHours() {
         return getSumOfOvertimeHoursByType(OvertimeTypeEnum.HOLIDAY);
-
     }
 
     public Long getTotalNightHolidayOvertimeHours() {
         return getSumOfOvertimeHoursByType(OvertimeTypeEnum.NIGHT_HOLIDAY);
-
     }
 
 

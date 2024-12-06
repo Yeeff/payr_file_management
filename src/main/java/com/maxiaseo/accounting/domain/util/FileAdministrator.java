@@ -18,6 +18,23 @@ import static com.maxiaseo.accounting.configuration.Constants.FIRST_DAY_OF_SECON
 
 public class FileAdministrator {
 
+    public static void overwriteTempFile(String tempFileName, byte[] data) throws IOException {
+
+        String tempFolder = System.getProperty("java.io.tmpdir");
+
+        File tempFile = new File(tempFolder, tempFileName);
+
+        if (!tempFile.exists()) {
+            throw new IOException("Temporary file does not exist: " + tempFile.getAbsolutePath());
+        }
+
+        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+            fos.write(data);
+        }
+
+        System.out.println("File overwritten successfully: " + tempFile.getAbsolutePath());
+    }
+
     public static byte[] getDataInMemoryFromTempFileByName(String tempFileName)throws IOException{
         String tempDir = System.getProperty("java.io.tmpdir");
         File tempFile = new File(tempDir, tempFileName);

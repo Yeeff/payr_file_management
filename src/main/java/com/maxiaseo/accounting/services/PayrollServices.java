@@ -30,6 +30,10 @@ public class PayrollServices  {
 
         List<Employee> employees = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay);
 
+        dataInMemory = excelManagerAdapter.updateEmployeeDataInExcel(dataInMemory,employees );
+
+        FileAdministrator.overwriteTempFile(tempFileName, dataInMemory);
+
         return employees;
     }
 
