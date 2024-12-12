@@ -1,4 +1,4 @@
-package com.maxiaseo.accounting.utils;
+package com.maxiaseo.accounting.domain.util;
 
 import com.maxiaseo.accounting.domain.model.Surcharge;
 

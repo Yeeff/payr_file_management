@@ -1,4 +1,4 @@
-package com.maxiaseo.accounting.domain.util;
+package com.maxiaseo.accounting.domain.util.file;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -112,6 +112,10 @@ public class CellsValidator {
         String columnName = getExcelColumnName(columnIndex);
         int excelRow = rowIndex + 1;
         return columnName + excelRow;
+    }
+    public static String getExcelRow(int rowIndex) {
+        int excelRow = rowIndex + 1;
+        return "" + excelRow;
     }
 
     public static String getCellValueAsString(Cell cell) {

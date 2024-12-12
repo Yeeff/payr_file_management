@@ -1,17 +1,16 @@
-package com.maxiaseo.accounting.services;
+package com.maxiaseo.accounting.domain.api.usecase;
 
+import com.maxiaseo.accounting.domain.api.IPayrollServicesPort;
 import com.maxiaseo.accounting.domain.exception.IncorrectFormatExcelValuesException;
 import com.maxiaseo.accounting.domain.model.Employee;
 import com.maxiaseo.accounting.domain.spi.IExelManagerPort;
-import com.maxiaseo.accounting.domain.util.FileAdministrator;
-import com.maxiaseo.accounting.domain.util.FileDataProcessor;
-import org.springframework.stereotype.Service;
+import com.maxiaseo.accounting.domain.util.file.FileAdministrator;
+import com.maxiaseo.accounting.domain.util.file.FileDataProcessor;
 
 import java.io.*;
 import java.util.*;
 
-@Service
-public class PayrollServices  {
+public class PayrollServices implements IPayrollServicesPort {
 
     private final IExelManagerPort excelManagerAdapter;
     private final FileDataProcessor fileDataProcessor;
@@ -22,7 +21,6 @@ public class PayrollServices  {
     }
 
     public List<Employee> handleFileUpload( String tempFileName, Integer year, Integer month, Integer initDay) throws IOException {
-
 
         byte[] dataInMemory = FileAdministrator.getDataInMemoryFromTempFileByName(tempFileName);
 
@@ -52,11 +50,6 @@ public class PayrollServices  {
 
     }
 
-    //--
-    public File getProcessedFile(File tempFile) {
-        return tempFile.exists() ? tempFile : null;
-    }
-    //--
     public void deleteTemporaryFile(File tempFile) {
         if (tempFile.exists()) {
             tempFile.delete();  // Remove the file from the temporary location

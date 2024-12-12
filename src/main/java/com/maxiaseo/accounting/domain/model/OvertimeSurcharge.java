@@ -1,6 +1,6 @@
 package com.maxiaseo.accounting.domain.model;
 
-import com.maxiaseo.accounting.utils.OvertimeSurchargeTypeEnum;
+import com.maxiaseo.accounting.domain.util.OvertimeSurchargeTypeEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

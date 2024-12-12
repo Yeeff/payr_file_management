@@ -1,6 +1,6 @@
 package com.maxiaseo.accounting.domain.model;
 
-import com.maxiaseo.accounting.utils.SurchargeTypeEnum;
+import com.maxiaseo.accounting.domain.util.SurchargeTypeEnum;
 import lombok.*;
 
 import java.time.LocalDateTime;

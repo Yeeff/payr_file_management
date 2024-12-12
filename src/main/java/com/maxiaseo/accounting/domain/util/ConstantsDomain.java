@@ -1,6 +1,6 @@
-package com.maxiaseo.accounting.configuration;
+package com.maxiaseo.accounting.domain.util;
 
-public class Constants {
+public class ConstantsDomain {
     public static final Integer FIRST_DAY_OF_FIRST_FORTNIGHT = 1;
     public static final Integer FIRST_DAY_OF_SECOND_FORTNIGHT = 16;
 

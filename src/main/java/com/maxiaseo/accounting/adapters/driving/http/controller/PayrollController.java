@@ -1,8 +1,9 @@
 package com.maxiaseo.accounting.adapters.driving.http.controller;
 
 import com.maxiaseo.accounting.adapters.driving.http.mapper.ExcelMapper;
+import com.maxiaseo.accounting.domain.api.IPayrollServicesPort;
 import com.maxiaseo.accounting.domain.model.Employee;
-import com.maxiaseo.accounting.services.PayrollServices;
+import com.maxiaseo.accounting.domain.api.usecase.PayrollServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -23,7 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PayrollController {
 
-    private final PayrollServices payrollServices;
+    private final IPayrollServicesPort payrollServices;
     private final ExcelMapper excelMapper;
 
     private File tempFile; // Store reference to the temp file

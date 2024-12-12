@@ -1,12 +1,12 @@
-package com.maxiaseo.accounting.domain.util;
+package com.maxiaseo.accounting.domain.util.file;
 
 import com.maxiaseo.accounting.domain.model.Employee;
 import com.maxiaseo.accounting.domain.model.Overtime;
 import com.maxiaseo.accounting.domain.model.OvertimeSurcharge;
 import com.maxiaseo.accounting.domain.model.Surcharge;
-import com.maxiaseo.accounting.utils.OvertimeCalculator;
-import com.maxiaseo.accounting.utils.OvertimeSurchargeCalculator;
-import com.maxiaseo.accounting.utils.SurchargeCalculator;
+import com.maxiaseo.accounting.domain.util.OvertimeCalculator;
+import com.maxiaseo.accounting.domain.util.OvertimeSurchargeCalculator;
+import com.maxiaseo.accounting.domain.util.SurchargeCalculator;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -14,13 +14,17 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
-import static com.maxiaseo.accounting.configuration.Constants.*;
-import static com.maxiaseo.accounting.configuration.Constants.FIRST_DAY_OF_SECOND_FORTNIGHT;
+import static com.maxiaseo.accounting.domain.util.ConstantsDomain.*;
+import static com.maxiaseo.accounting.domain.util.ConstantsDomain.FIRST_DAY_OF_SECOND_FORTNIGHT;
 
 public class FileDataProcessor {
 
     private static final Long MAX_HOURS_BY_DAY = 8L;
     private static final Long MAX_HOURS_BY_WEEK = 48L;
+
+    private static final Integer FIRST_DAY_OF_MONTH = 1;
+    private static final Integer LAST_DAY_OF_FIRST_FORTNIGHT = 15;
+
 
     Long hoursWorkedPerWeek ;
 
@@ -30,13 +34,12 @@ public class FileDataProcessor {
 
     public  List<Employee> extractEmployeeData(List<List<String>> listOfListData, Integer year, Integer month, Integer initDay){
 
-
         LocalDate initDateOfFortnight = LocalDate.of(year,month, initDay);
         LocalDate currentDate;
 
         List<Employee> employees = new ArrayList<>();
 
-        for (int i = FIRST_ROW_WITH_VALID_DATA_INDEX; i <= listOfListData.size(); i++) {
+        for (int i = FIRST_ROW_WITH_VALID_DATA_INDEX; i <= listOfListData.size()-1; i++) {
 
             Employee employee = Employee.builder()
                     .surcharges(new ArrayList<>())
@@ -75,7 +78,11 @@ public class FileDataProcessor {
                     }
                 }
             }
-            if(!employee.getSurcharges().isEmpty()) employees.add(employee);
+            if(
+                    !employee.getSurcharges().isEmpty() ||
+                            !employee.getOvertimes().isEmpty() ||
+                            !employee.getOvertimeSurcharges().isEmpty()
+            ) employees.add(employee);
 
         }
         return employees;
@@ -91,9 +98,13 @@ public class FileDataProcessor {
 
         LocalDate initDateOfFortnight = LocalDate.of(year,month, day);
         LocalDate currentDate;
+        Integer lastDayOfSecondFortnight = 30;
+
+        if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT)
+            lastDayOfSecondFortnight = initDateOfFortnight.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth();
 
 
-        for (int i = FIRST_ROW_WITH_VALID_DATA_INDEX; i <= listOfListExcelData.size(); i++) {
+        for (int i = FIRST_ROW_WITH_VALID_DATA_INDEX; i <= listOfListExcelData.size() - 1; i++) {
 
             currentDate = initDateOfFortnight;
 
@@ -120,10 +131,11 @@ public class FileDataProcessor {
                             ));
                 }
 
-                for (int j = FIRST_COLUM_WITH_VALID_DATA_INDEX; j < dataRowList.size(); j++) {
+                for (int j = FIRST_COLUM_WITH_VALID_DATA_INDEX; j < dataRowList.size() ; j++) {
 
                     String cellValue = dataRowList.get(j);
 
+                    //First fortnight of month
                     if(initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_FIRST_FORTNIGHT){
                         if(currentDate.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT){
                             if(cellValue != ""){
@@ -135,10 +147,10 @@ public class FileDataProcessor {
                             break;
                         }
 
+                        //Second fortnight of month
                     } else if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT) {
 
-                        Integer nextMoth = initDateOfFortnight.plusMonths(1).getDayOfMonth();
-                        if(currentDate.getDayOfMonth() == nextMoth ){
+                        if(currentDate.getDayOfMonth() == FIRST_DAY_OF_MONTH ){
 
                             if(cellValue != ""){
                                 errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
@@ -163,6 +175,15 @@ public class FileDataProcessor {
                     }
 
                     currentDate =currentDate.plusDays(1);
+                }
+            }
+
+            if(initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_FIRST_FORTNIGHT){
+                if(currentDate.getDayOfMonth() <= LAST_DAY_OF_FIRST_FORTNIGHT)
+                    errorsMap.put(CellsValidator.getExcelRow(i), "La fila " + i + " no contiene la candidad de dias correspondiente de la primera quincena");
+            }else if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT) {
+                if(currentDate.getDayOfMonth() <= lastDayOfSecondFortnight && currentDate.getDayOfMonth() > FIRST_DAY_OF_SECOND_FORTNIGHT ){
+                    errorsMap.put(CellsValidator.getExcelRow(i), "La fila " + i + " no contiene la candidad de dias correspondiente a la segunda quincena de la fecha indicada");
                 }
             }
 
