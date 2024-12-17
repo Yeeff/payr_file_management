@@ -33,44 +33,44 @@ public class Employee {
 
 
 
-    public Long getTotalNightSurchargeHours() {
+    public Long getTotalSurchargeHoursNight() {
         return getSumOfSurchargeHoursByType(SurchargeTypeEnum.NIGHT);
     }
 
-    public Long getTotalHolidaySurchargeHours() {
+    public Long getTotalSurchargeHoursHoliday() {
         return getSumOfSurchargeHoursByType(SurchargeTypeEnum.HOLIDAY);
     }
 
-    public Long getTotalNightHolidaySurchargeHours() {
+    public Long getTotalSurchargeHoursNightHoliday() {
         return getSumOfSurchargeHoursByType(SurchargeTypeEnum.NIGHT_HOLIDAY);
     }
 
 
 
-    public Long getTotalDayOvertimeHours() {
+    public Long getTotalOvertimeHoursDay() {
         return getSumOfOvertimeHoursByType(OvertimeTypeEnum.DAY);
     }
 
-    public Long getTotalNightOvertimeHours() {
+    public Long getTotalOvertimeHoursNight() {
         return getSumOfOvertimeHoursByType(OvertimeTypeEnum.NIGHT);
     }
 
-    public Long getTotalHolidayOvertimeHours() {
+    public Long getTotalOvertimeHoursHoliday() {
         return getSumOfOvertimeHoursByType(OvertimeTypeEnum.HOLIDAY);
     }
 
-    public Long getTotalNightHolidayOvertimeHours() {
+    public Long getTotalOvertimeHoursNightHoliday() {
         return getSumOfOvertimeHoursByType(OvertimeTypeEnum.NIGHT_HOLIDAY);
     }
 
 
 
 
-    public Long getTotalNightHolidayOvertimeSurchargeHours() {
+    public Long getTotalOvertimeSurchargeHours_NightHoliday() {
         return getSumOfOvertimeSurchargeHoursByType(OvertimeSurchargeTypeEnum.NIGHT_HOLIDAY);
 
     }
-    public Long getTotalHolidayOvertimeSurchargeHours() {
+    public Long getTotalOvertimeSurchargeHours_Holiday() {
         return getSumOfOvertimeSurchargeHoursByType(OvertimeSurchargeTypeEnum.HOLIDAY);
 
     }

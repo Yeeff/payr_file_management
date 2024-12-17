@@ -72,8 +72,6 @@ class FileDataProcessorTest {
 
         Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListExcelData);
 
-        System.out.println(errorsMap);
-
         assertEquals(5, errorsMap.size()); // Ensure 4 errors are found
 
         assertTrue(errorsMap.containsKey("B2"));
@@ -192,28 +190,28 @@ class FileDataProcessorTest {
     }
 
     @Test
-    void testExtractEmployeeData_validInput() {
+    void testExtractEmployeeDataCombination1() {
         // Arrange
         List<List<String>> listOfListData = Arrays.asList(
                 Arrays.asList("CEDULA", "NOMBRE", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14","15"),
                 Arrays.asList(
                         "15326844",
                         "NORALDO ISIDRO CARDENAS CARDENAS",
+                        "DESC",//Sunday
+                        "8pm a 6am",
+                        "7am a 4pm",
+                        "6pm a 6am",
+                        "7am a 4pm",
+                        "7am a 4pm",
+                        "6pm a 5am",
+                        "DESC",//Sunday
+                        "7am a 4pm",
+                        "7am a 4pm",
+                        "7am a 4pm",
                         "DESC",
-                        "7am a 4pm",
-                        "7am a 4pm",
-                        "7am a 4pm",
-                        "7am a 4pm",
-                        "7am a 4pm",
-                        "7am a 4pm",
-                        "DESC",
-                        "7am a 4pm",
-                        "7am a 4pm",
-                        "7am a 4pm",
-                        "7am a 4pm",
-                        "7am a 4pm",
-                        "7am a 4pm",
-                        "7am a 4pm"
+                        "7am a 6pm",
+                        "8pm a 4am",
+                        "7am a 7pm"//Sunday
                 )
         );
         int year = 2024;
@@ -228,48 +226,113 @@ class FileDataProcessorTest {
         Employee employee = result.get(0);
         assertEquals("15326844", employee.getId().toString());
         assertEquals("NORALDO ISIDRO CARDENAS CARDENAS", employee.getName());
-        //assertEquals(5, employee.getTotal());
-    }
-/*
-    @Test
-    void testExtractEmployeeData_missingEmployeeData() {
-        // Arrange
-        List<List<String>> listOfListData = Arrays.asList(
-                Arrays.asList("CEDULA", "NOMBRE", "1", "2", "3"),
-                Arrays.asList("", "", "DESC", "7am a 4pm", "7am a 4pm") // Invalid row
-        );
-        int year = 2023;
-        int month = 12;
-        int initDay = 1;
 
-        // Act
-        List<Employee> result = yourClass.extractEmployeeData(listOfListData, year, month, initDay);
+        assertEquals(18, employee.getTotalSurchargeHoursNight());
+        assertEquals(6, employee.getTotalSurchargeHoursNightHoliday() );
+        assertEquals(8, employee.getTotalSurchargeHoursHoliday());
 
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.isEmpty()); // Invalid row should not create an Employee.
+        assertEquals(9, employee.getTotalOvertimeHoursDay());
+        assertEquals(6, employee.getTotalOvertimeHoursNight());
+        assertEquals(4, employee.getTotalOvertimeHoursHoliday());
+        assertEquals(3, employee.getTotalOvertimeHoursNightHoliday());
     }
 
     @Test
-    void testExtractEmployeeData_invalidTimeRange() {
-        // Arrange
+    void testExtractEmployeeDataCombination2() {
+
         List<List<String>> listOfListData = Arrays.asList(
-                Arrays.asList("CEDULA", "NOMBRE", "1", "2", "3"),
-                Arrays.asList("15326844", "NORALDO ISIDRO CARDENAS CARDENAS", "DESC", "InvalidTimeRange", "7am a 4pm")
+                Arrays.asList("CEDULA", "NOMBRE", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14","15"),
+                Arrays.asList(
+                        "15326844",
+                        "ISIDRO CARDENAS",
+                        "6am a 6pm",//sunday
+                        "6am a 6pm"	,
+                        "6am a 6pm",
+                        "6pm a 6am"	,
+                        "DESC",
+                        "6pm a 6am"	,
+                        "6pm a 6am",
+                        "6pm a 6am",//sunday
+                        "6pm a 6am"	,
+                        "DESC",
+                        "DESC",
+                        "DESC",
+                        "6am a 6pm"	,
+                        "6am a 6pm"	,
+                        "6am a 6pm" //sunday
+                )
         );
-        int year = 2023;
-        int month = 12;
+        int year = 2024;
+        int month = 9;
         int initDay = 1;
 
         // Act
-        List<Employee> result = yourClass.extractEmployeeData(listOfListData, year, month, initDay);
+        List<Employee> result = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         Employee employee = result.get(0);
-        assertTrue(employee.getSurcharges().isEmpty()); // Invalid time range should not process as a surcharge.
+
+        assertEquals("15326844", employee.getId().toString());
+        assertEquals("ISIDRO CARDENAS", employee.getName());
+
+        assertEquals(20, employee.getTotalSurchargeHoursNight());
+        assertEquals(5, employee.getTotalSurchargeHoursNightHoliday() );
+        assertEquals(19, employee.getTotalSurchargeHoursHoliday());
+
+        assertEquals(16, employee.getTotalOvertimeHoursDay());
+        assertEquals(16, employee.getTotalOvertimeHoursNight());
+        assertEquals(8, employee.getTotalOvertimeHoursHoliday());
+        assertEquals(4, employee.getTotalOvertimeHoursNightHoliday());
     }
-*/
+
+    @Test
+    void testExtractEmployeeDataCombination3() {
+        List<List<String>> listOfListData = Arrays.asList(
+                Arrays.asList("CEDULA", "NOMBRE", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"),
+                Arrays.asList(
+                        "12345678",
+                        "JUAN PEREZ",
+                        "8am a 8pm", // Sunday
+                        "8am a 5pm",
+                        "DESC",
+                        "9pm a 5am",//
+                        "DESC",
+                        "8am a 5pm",
+                        "8pm a 4am",//
+                        "8am a 8pm", // Sunday
+                        "9pm a 5am",//
+                        "DESC",
+                        "6am a 10am",
+                        "9pm a 1am",//
+                        "9am a 9pm",
+                        "10pm a 6am",//
+                        "8am a 5pm" // Sunday
+                )
+        );
+        int year = 2024;
+        int month = 9;
+        int initDay = 1;
+
+        // Act
+        List<Employee> result = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        Employee employee = result.get(0);
+
+        assertEquals("12345678", employee.getId().toString());
+        assertEquals("JUAN PEREZ", employee.getName());
+
+        assertEquals(25, employee.getTotalSurchargeHoursNight());
+        assertEquals(10, employee.getTotalSurchargeHoursNightHoliday());
+        assertEquals(24, employee.getTotalSurchargeHoursHoliday());
+
+        assertEquals(6, employee.getTotalOvertimeHoursDay());
+        assertEquals(0, employee.getTotalOvertimeHoursNight());
+        assertEquals(9, employee.getTotalOvertimeHoursHoliday());
+        assertEquals(0, employee.getTotalOvertimeHoursNightHoliday());
+    }
+
 
 }
