@@ -50,7 +50,7 @@ public class FileDataProcessor {
             currentDate = initDateOfFortnight;
 
             List<String> dataRowList = listOfListData.get(i);
-            if (dataRowList.size() != 0) {
+            if (!dataRowList.isEmpty()) {
 
                 try{
                     employee.setId( Long.valueOf(dataRowList.get(EMPLOYEE_DOCUMENT_ID_INDEX)));
@@ -64,8 +64,11 @@ public class FileDataProcessor {
                     if (dataRowList.get(j) != null) {
                         String cellValue = dataRowList.get(j);
 
-                        if (CellsValidator.isValidTimeRange(cellValue)){
-                            employee = processSchedule( cellValue, currentDate, employee);
+                        if (CellsValidator.isValidTimeRange(cellValue) || !cellValue.equals(AbsenceReasonsEnum.AUS)){
+                            TimeRange currentTimeRange = getInitTimeAndEndTime(cellValue, currentDate);
+                            employee = processSchedule( currentTimeRange.getStartTime(), currentTimeRange.getEndTime(), employee);
+
+                            addHoursWorked(currentTimeRange);
                         }
                     }
 
@@ -94,7 +97,7 @@ public class FileDataProcessor {
 
         Map<String, String> errorsMap = new HashMap<>();
 
-        Boolean blankLineFound = false;
+        Boolean blankLineFound = Boolean.valueOf(false);
 
         LocalDate initDateOfFortnight = LocalDate.of(year,month, day);
         LocalDate currentDate;
@@ -109,18 +112,18 @@ public class FileDataProcessor {
             currentDate = initDateOfFortnight;
 
             List<String> dataRowList = listOfListExcelData.get(i);
-            if (dataRowList.size() != 0) {
+            if (!dataRowList.isEmpty()) {
 
-                if(dataRowList.get(0) == "")
-                    if(CellsValidator.isAEmptyLine(dataRowList)){
-                        blankLineFound = true;
-                        break;
-                    }
+                if(dataRowList.get(0).equals("") &&
+                        CellsValidator.isAEmptyLine(dataRowList)){
+                    blankLineFound = true;
+                    break;
+                }
 
                 String employeeName = dataRowList.get(EMPLOYEE_NAME_INDEX);
-                if(employeeName == ""){
+                if(employeeName.equals("")){
                     errorsMap.put(CellsValidator.getExcelCoordinate(i,EMPLOYEE_NAME_INDEX)
-                            , String.format("El campo nombre no puede estar vacio."));
+                            , "El campo nombre no puede estar vacio.");
                 }
 
                 String employeeDocumentId =  dataRowList.get(EMPLOYEE_DOCUMENT_ID_INDEX) ;
@@ -138,7 +141,7 @@ public class FileDataProcessor {
                     //First fortnight of month
                     if(initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_FIRST_FORTNIGHT){
                         if(currentDate.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT){
-                            if(cellValue != ""){
+                            if(!cellValue.equals("")){
                                 errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
                                         String.format("El ultimo dia la quincena debe ser 15 pero después de esa columana se encontro el valor: %s",
                                                 cellValue
@@ -148,11 +151,10 @@ public class FileDataProcessor {
                         }
 
                         //Second fortnight of month
-                    } else if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT) {
+                    } else if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT
+                        && currentDate.getDayOfMonth() == FIRST_DAY_OF_MONTH ){
 
-                        if(currentDate.getDayOfMonth() == FIRST_DAY_OF_MONTH ){
-
-                            if(cellValue != ""){
+                            if(!cellValue.equals("")){
                                 errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
                                         String.format("El ultimo dia de %s es %s pero después de esa columana se encontro el valor: %s",
                                                 initDateOfFortnight.getMonth(),
@@ -161,15 +163,13 @@ public class FileDataProcessor {
                                         ));
                             }
                             break;
-                        }
+
                     }
 
 
                     if (!CellsValidator.isValidTimeRange(cellValue) && !CellsValidator.isValidAbsenceReasons(cellValue)) {
                         errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
-                                String.format("-> " +cellValue + " <- no, es un valor valido",
-                                        initDateOfFortnight.getMonth(),
-                                        initDateOfFortnight.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth(),
+                                String.format("-> %s <- no, es un valor valido",
                                         cellValue
                                 ));
                     }
@@ -181,13 +181,13 @@ public class FileDataProcessor {
             if(initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_FIRST_FORTNIGHT){
                 if(currentDate.getDayOfMonth() <= LAST_DAY_OF_FIRST_FORTNIGHT)
                     errorsMap.put(CellsValidator.getExcelRow(i), "La fila " + i + " no contiene la candidad de dias correspondiente de la primera quincena");
-            }else if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT) {
-                if(currentDate.getDayOfMonth() <= lastDayOfSecondFortnight && currentDate.getDayOfMonth() > FIRST_DAY_OF_SECOND_FORTNIGHT ){
+            }else if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT &&
+                currentDate.getDayOfMonth() <= lastDayOfSecondFortnight && currentDate.getDayOfMonth() > FIRST_DAY_OF_SECOND_FORTNIGHT ){
                     errorsMap.put(CellsValidator.getExcelRow(i), "La fila " + i + " no contiene la candidad de dias correspondiente a la segunda quincena de la fecha indicada");
-                }
+
             }
 
-            if(blankLineFound)
+            if(Boolean.TRUE.equals(blankLineFound))
                 break;
 
         }
@@ -195,14 +195,7 @@ public class FileDataProcessor {
 
     }
 
-    private Employee processSchedule( String schedule, LocalDate date,Employee employee) {
-
-        String[] times = schedule.split(" a");
-        LocalDateTime startTime = parseTime(times[0].trim(), date);
-        LocalDateTime endTime = parseTime(times[1].trim(), date);
-
-        if(endTime.isBefore(startTime))
-            endTime = endTime.plusDays(1);
+    private Employee processSchedule( LocalDateTime startTime, LocalDateTime endTime,Employee employee) {
 
         if (hoursWorkedPerWeek >= MAX_HOURS_BY_WEEK && startTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
             for (OvertimeSurcharge overtimeSurcharge : OvertimeSurchargeCalculator.getOvertimeSurchargeList(startTime, endTime)) {
@@ -224,13 +217,6 @@ public class FileDataProcessor {
             }
         }
 
-        Long hoursWorkedPerDay = Duration.between(startTime,endTime).toHours();
-
-        if (hoursWorkedPerDay > MAX_HOURS_BY_DAY)
-            hoursWorkedPerWeek += MAX_HOURS_BY_DAY;
-        else
-            hoursWorkedPerWeek += hoursWorkedPerDay ;
-
         return employee;
     }
 
@@ -246,5 +232,25 @@ public class FileDataProcessor {
 
     }
 
+    private TimeRange getInitTimeAndEndTime( String schedule, LocalDate date){
+        String[] times = schedule.split(" a");
+        LocalDateTime startTime = parseTime(times[0].trim(), date);
+        LocalDateTime endTime = parseTime(times[1].trim(), date);
+
+        if(endTime.isBefore(startTime))
+            endTime = endTime.plusDays(1);
+
+        return new TimeRange(startTime, endTime);
+    }
+
+    private void addHoursWorked(TimeRange currentTimeRange){
+        Long hoursWorkedPerDay = Duration.between(
+                currentTimeRange.getStartTime(), currentTimeRange.getEndTime() ).toHours();
+
+        if (hoursWorkedPerDay > MAX_HOURS_BY_DAY)
+            hoursWorkedPerWeek += MAX_HOURS_BY_DAY;
+        else
+            hoursWorkedPerWeek += hoursWorkedPerDay ;
+    }
 
 }
