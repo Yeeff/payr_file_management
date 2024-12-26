@@ -25,11 +25,20 @@ public class FileDataProcessor {
     private static final Integer FIRST_DAY_OF_MONTH = 1;
     private static final Integer LAST_DAY_OF_FIRST_FORTNIGHT = 15;
 
+    private Employee employee;
+
+    private Integer lastDayOfSecondFortnight;
+
+    Map<String, String> errorsMap ;
+
+
 
     Long hoursWorkedPerWeek ;
 
     public FileDataProcessor() {
         this.hoursWorkedPerWeek = 0L;
+        this.lastDayOfSecondFortnight = 30;
+        errorsMap = new HashMap<>();
     }
 
     public  List<Employee> extractEmployeeData(List<List<String>> listOfListData, Integer year, Integer month, Integer initDay){
@@ -41,52 +50,36 @@ public class FileDataProcessor {
 
         for (int i = FIRST_ROW_WITH_VALID_DATA_INDEX; i <= listOfListData.size()-1; i++) {
 
-            Employee employee = Employee.builder()
-                    .surcharges(new ArrayList<>())
-                    .overtimes(new ArrayList<>())
-                    .overtimeSurcharges(new ArrayList<>())
-                    .build();
+            employee = new Employee();
 
             currentDate = initDateOfFortnight;
 
             List<String> dataRowList = listOfListData.get(i);
-            if (!dataRowList.isEmpty()) {
 
-                try{
-                    employee.setId( Long.valueOf(dataRowList.get(EMPLOYEE_DOCUMENT_ID_INDEX)));
-                    employee.setName(dataRowList.get(EMPLOYEE_NAME_INDEX));
-                }catch (Exception e){
-                    break;
+            employee.setId(extractDocumentId(dataRowList));
+            employee.setName(extractName(dataRowList));
+
+            for (int j = FIRST_COLUM_WITH_VALID_DATA_INDEX; j < dataRowList.size(); j++) {
+
+                if (dataRowList.get(j) != null) {
+                    String cellValue = dataRowList.get(j);
+
+                    if (CellsValidator.isValidTimeRange(cellValue) ){
+                        TimeRange currentTimeRange = getInitTimeAndEndTime(cellValue, currentDate);
+                        processSchedule( currentTimeRange.getStartTime(), currentTimeRange.getEndTime());
+
+                        addHoursWorkedBasedOnTimeRange(currentTimeRange);
+                    } else if(!cellValue.equals(AbsenceReasonsEnum.AUS.toString())  )
+                        addHoursWorkedBasedOnAbsentReason( 8L);
                 }
 
-                for (int j = FIRST_COLUM_WITH_VALID_DATA_INDEX; j < dataRowList.size(); j++) {
+                if(currentDate.getDayOfWeek() == DayOfWeek.SUNDAY)
+                    hoursWorkedPerWeek = 0L;
 
-                    if (dataRowList.get(j) != null) {
-                        String cellValue = dataRowList.get(j);
+                currentDate =currentDate.plusDays(1);
 
-                        if (CellsValidator.isValidTimeRange(cellValue) ){
-                            TimeRange currentTimeRange = getInitTimeAndEndTime(cellValue, currentDate);
-                            employee = processSchedule( currentTimeRange.getStartTime(), currentTimeRange.getEndTime(), employee);
-
-                            addHoursWorkedBasedOnTimeRange(currentTimeRange);
-                        } else if(!cellValue.equals(AbsenceReasonsEnum.AUS.toString())  )
-                            addHoursWorkedBasedOnAbsentReason( 8L);
-                    }
-
-                    if(currentDate.getDayOfWeek() == DayOfWeek.SUNDAY)
-                        hoursWorkedPerWeek = 0L;
-
-                    currentDate =currentDate.plusDays(1);
-                    if(initDateOfFortnight.plusMonths(1).getDayOfMonth() == currentDate.getDayOfMonth()){
-                        break;
-                    }
-                }
             }
-            if(
-                    !employee.getSurcharges().isEmpty() ||
-                            !employee.getOvertimes().isEmpty() ||
-                            !employee.getOvertimeSurcharges().isEmpty()
-            ) employees.add(employee);
+            employees = addCurrentEmployeeToList(employees);
 
         }
         return employees;
@@ -96,114 +89,54 @@ public class FileDataProcessor {
                                                       List<List<String >> listOfListExcelData
     ){
 
-        Map<String, String> errorsMap = new HashMap<>();
-
-        Boolean blankLineFound = Boolean.valueOf(false);
-
         LocalDate initDateOfFortnight = LocalDate.of(year,month, day);
         LocalDate currentDate;
-        Integer lastDayOfSecondFortnight = 30;
 
-        if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT)
-            lastDayOfSecondFortnight = initDateOfFortnight.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth();
-
+        adjustTheLastDayOfSecondFortnightIfNeeded(initDateOfFortnight);
 
         for (int i = FIRST_ROW_WITH_VALID_DATA_INDEX; i <= listOfListExcelData.size() - 1; i++) {
 
             currentDate = initDateOfFortnight;
 
             List<String> dataRowList = listOfListExcelData.get(i);
-            if (!dataRowList.isEmpty()) {
 
-                if(dataRowList.get(0).equals("") &&
-                        CellsValidator.isAEmptyLine(dataRowList)){
-                    blankLineFound = true;
+
+            if(Boolean.TRUE.equals( isAnEmptyLine(dataRowList)) ) break;
+
+            checkForErrorsInEmployeeName(dataRowList,i);
+
+            checkForErrorsInEmployeeDocument(dataRowList, i);
+
+            for (int j = FIRST_COLUM_WITH_VALID_DATA_INDEX; j < dataRowList.size() ; j++) {
+
+                String cellValue = dataRowList.get(j);
+
+                if (Boolean.TRUE.equals( isThereErrorsAfterTheLastDayOfFortNight(initDateOfFortnight,currentDate,cellValue, i, j)) )
                     break;
-                }
 
-                String employeeName = dataRowList.get(EMPLOYEE_NAME_INDEX);
-                if(employeeName.equals("")){
-                    errorsMap.put(CellsValidator.getExcelCoordinate(i,EMPLOYEE_NAME_INDEX)
-                            , "El campo nombre no puede estar vacio.");
-                }
 
-                String employeeDocumentId =  dataRowList.get(EMPLOYEE_DOCUMENT_ID_INDEX) ;
-                if(!CellsValidator.isANumber(employeeDocumentId)){
-                    errorsMap.put( CellsValidator.getExcelCoordinate(i, EMPLOYEE_DOCUMENT_ID_INDEX),
-                            String.format("El valor '%s' no es válido como numero de identificacion del empleado.",
-                                    employeeDocumentId
+                if (!CellsValidator.isValidTimeRange(cellValue) && !CellsValidator.isValidAbsenceReasons(cellValue)) {
+                    errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
+                            String.format("-> %s <- no, es un valor valido",
+                                    cellValue
                             ));
                 }
 
-                for (int j = FIRST_COLUM_WITH_VALID_DATA_INDEX; j < dataRowList.size() ; j++) {
-
-                    String cellValue = dataRowList.get(j);
-
-                    //First fortnight of month
-                    if(initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_FIRST_FORTNIGHT){
-                        if(currentDate.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT){
-                            if(!cellValue.equals("")){
-                                errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
-                                        String.format("El ultimo dia la quincena debe ser 15 pero después de esa columana se encontro el valor: %s",
-                                                cellValue
-                                        ));
-                            }
-                            break;
-                        }
-
-                        //Second fortnight of month
-                    } else if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT
-                        && currentDate.getDayOfMonth() == FIRST_DAY_OF_MONTH ){
-
-                            if(!cellValue.equals("")){
-                                errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
-                                        String.format("El ultimo dia de %s es %s pero después de esa columana se encontro el valor: %s",
-                                                initDateOfFortnight.getMonth(),
-                                                initDateOfFortnight.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth(),
-                                                cellValue
-                                        ));
-                            }
-                            break;
-
-                    }
-
-
-                    if (!CellsValidator.isValidTimeRange(cellValue) && !CellsValidator.isValidAbsenceReasons(cellValue)) {
-                        errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
-                                String.format("-> %s <- no, es un valor valido",
-                                        cellValue
-                                ));
-                    }
-
-                    currentDate =currentDate.plusDays(1);
-                }
+                currentDate =currentDate.plusDays(1);
             }
 
-            if(initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_FIRST_FORTNIGHT){
-                if(currentDate.getDayOfMonth() <= LAST_DAY_OF_FIRST_FORTNIGHT)
-                    errorsMap.put(CellsValidator.getExcelRow(i), "La fila " + i + " no contiene la candidad de dias correspondiente de la primera quincena");
-            }else if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT &&
-                currentDate.getDayOfMonth() <= lastDayOfSecondFortnight && currentDate.getDayOfMonth() > FIRST_DAY_OF_SECOND_FORTNIGHT ){
-                    errorsMap.put(CellsValidator.getExcelRow(i), "La fila " + i + " no contiene la candidad de dias correspondiente a la segunda quincena de la fecha indicada");
+            checkTheNumberOfIterationsBasedOnFortnight(initDateOfFortnight, currentDate, i);
 
-            }
-
-            if(Boolean.TRUE.equals(blankLineFound))
-                break;
 
         }
         return errorsMap;
 
     }
 
-    private Employee processSchedule( LocalDateTime startTime, LocalDateTime endTime,Employee employee) {
+    private void processSchedule( LocalDateTime startTime, LocalDateTime endTime) {
 
         if (hoursWorkedPerWeek >= MAX_HOURS_BY_WEEK && startTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
-            for (OvertimeSurcharge overtimeSurcharge : OvertimeSurchargeCalculator.getOvertimeSurchargeList(startTime, endTime)) {
-                if (overtimeSurcharge.getQuantityOfHours() != 0) {
-                    employee.addNewOverTimeSurcharge(overtimeSurcharge);
-                }
-            }
+            addOvertimeSurchargeToEmployee(startTime, endTime);
         } else {
             for (Surcharge surcharge : SurchargeCalculator.getSurchargeList(startTime, endTime)) {
                 if (surcharge.getQuantityOfHours() != 0) {
@@ -218,7 +151,6 @@ public class FileDataProcessor {
             }
         }
 
-        return employee;
     }
 
     private LocalDateTime parseTime(String timeString, LocalDate date) {
@@ -259,4 +191,125 @@ public class FileDataProcessor {
             hoursWorkedPerWeek += hourToSum ;
     }
 
+    private String extractName(List<String> dataRowList){
+                 return dataRowList.get(EMPLOYEE_NAME_INDEX);
+    }
+
+    private Long extractDocumentId(List<String> dataRowList){
+        return Long.valueOf(dataRowList.get(EMPLOYEE_DOCUMENT_ID_INDEX));
+    }
+
+    private List<Employee> addCurrentEmployeeToList(List<Employee> employees){
+        if(
+                !employee.getSurcharges().isEmpty() ||
+                        !employee.getOvertimes().isEmpty() ||
+                        !employee.getOvertimeSurcharges().isEmpty()
+        ) employees.add(employee);
+        return employees;
+    }
+
+    private void addOvertimeSurchargeToEmployee (LocalDateTime startTime, LocalDateTime endTime){
+        for (OvertimeSurcharge overtimeSurcharge : OvertimeSurchargeCalculator.getOvertimeSurchargeList(startTime, endTime)) {
+            if (overtimeSurcharge.getQuantityOfHours() != 0) {
+                employee.addNewOverTimeSurcharge(overtimeSurcharge);
+            }
+        }
+    }
+
+    //MethodsToValidateFormat
+
+    private Boolean isAnEmptyLine(List<String> dataRowList){
+
+        Boolean isEmpty = false;
+
+        if(dataRowList.get(0).equals("") &&
+                CellsValidator.isAEmptyLine(dataRowList)){
+            isEmpty = true;
+        }
+        return isEmpty;
+    }
+
+    private void adjustTheLastDayOfSecondFortnightIfNeeded ( LocalDate initDateOfFortnight){
+        if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT)
+            lastDayOfSecondFortnight = initDateOfFortnight.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth();
+    }
+
+    private void checkForErrorsInEmployeeName(List<String> dataRowList, Integer i){
+        String employeeName = dataRowList.get(EMPLOYEE_NAME_INDEX);
+        if(employeeName.equals("")){
+            errorsMap.put(CellsValidator.getExcelCoordinate(i ,EMPLOYEE_NAME_INDEX)
+                    , "El campo nombre no puede estar vacio.");
+        }
+    }
+
+    private  void checkForErrorsInEmployeeDocument(List<String> dataRowList, Integer i){
+        String employeeDocumentId =  dataRowList.get(EMPLOYEE_DOCUMENT_ID_INDEX) ;
+        if(!CellsValidator.isANumber(employeeDocumentId)){
+            errorsMap.put( CellsValidator.getExcelCoordinate(i, EMPLOYEE_DOCUMENT_ID_INDEX),
+                    String.format("El valor '%s' no es válido como numero de identificacion del empleado.",
+                            employeeDocumentId
+                    ));
+        }
+    }
+
+    private Boolean isThereErrorsAfterTheLastDayOfFortNight(LocalDate initDateOfFortnight, LocalDate currentDate, String cellValue,Integer i, Integer j){
+        //First fortnight of month
+        if(initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_FIRST_FORTNIGHT){
+            if(currentDate.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT){
+                if(!cellValue.equals("")){
+                    errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
+                            String.format("El ultimo dia la quincena debe ser 15 pero después de esa columana se encontro el valor: %s",
+                                    cellValue
+                            ));
+                }
+                return true;
+            }
+
+            //Second fortnight of month
+        } else if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT
+                && currentDate.getDayOfMonth() == FIRST_DAY_OF_MONTH ){
+
+            if(!cellValue.equals("")){
+                errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
+                        String.format("El ultimo dia de %s es %s pero después de esa columana se encontro el valor: %s",
+                                initDateOfFortnight.getMonth(),
+                                initDateOfFortnight.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth(),
+                                cellValue
+                        ));
+            }
+            return true;
+
+        }
+        return false;
+    }
+
+    private void checkTheNumberOfIterationsBasedOnFortnight(LocalDate initDateOfFortnight, LocalDate currentDate, Integer i){
+
+        if(initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_FIRST_FORTNIGHT){
+            if(currentDate.getDayOfMonth() <= LAST_DAY_OF_FIRST_FORTNIGHT)
+                errorsMap.put(CellsValidator.getExcelRow(i), "La fila " + i + " no contiene la candidad de dias correspondiente de la primera quincena");
+        }else if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT &&
+                currentDate.getDayOfMonth() <= lastDayOfSecondFortnight && currentDate.getDayOfMonth() > FIRST_DAY_OF_SECOND_FORTNIGHT ){
+            errorsMap.put(CellsValidator.getExcelRow(i), "La fila " + i + " no contiene la candidad de dias correspondiente a la segunda quincena de la fecha indicada");
+        }
+
+    }
+
+    class TimeRange {
+        private final LocalDateTime startTime;
+        private final LocalDateTime endTime;
+
+        public TimeRange(LocalDateTime startTime, LocalDateTime endTime) {
+            this.startTime = startTime;
+            this.endTime = endTime;
+        }
+
+        public LocalDateTime getStartTime() {
+            return startTime;
+        }
+
+        public LocalDateTime getEndTime() {
+            return endTime;
+        }
+    }
 }

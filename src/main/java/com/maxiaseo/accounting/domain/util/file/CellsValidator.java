@@ -1,21 +1,13 @@
 package com.maxiaseo.accounting.domain.util.file;
 
 import com.maxiaseo.accounting.domain.util.ConstantsDomain;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Row;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CellsValidator {
 
-
+    private CellsValidator() {}
 
     public static final Integer NUM_OF_DAYS_IN_A_FORTNIGHT = 15;
 
@@ -38,13 +30,13 @@ public class CellsValidator {
         return ConstantsDomain.VALID_CODES.contains(value.trim());
     }
 
-    public static boolean isAEmptyLine(List rowDataList){
+    public static boolean isAEmptyLine(List<String> rowDataList){
 
         Integer blankCellsCounter = 0;
         Boolean isBlankLine = false;
 
         for (int i = 0; i < rowDataList.size(); i++) {
-            if( rowDataList.get(i)  == "" ){
+            if( rowDataList.get(i).equals("") ){
                 blankCellsCounter++;
             }else{
                 break;

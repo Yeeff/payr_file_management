@@ -3,21 +3,26 @@ package com.maxiaseo.accounting.domain.model;
 import com.maxiaseo.accounting.domain.util.OvertimeSurchargeTypeEnum;
 import com.maxiaseo.accounting.domain.util.OvertimeTypeEnum;
 import com.maxiaseo.accounting.domain.util.SurchargeTypeEnum;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
-@Builder
 public class Employee {
     private Long id;
     private String name;
     private List<Surcharge> surcharges;
     private List<Overtime> overtimes;
     private List<OvertimeSurcharge> overtimeSurcharges;
+
+    public Employee() {
+        this.surcharges = new ArrayList<>();
+        this.overtimes = new ArrayList<>();
+        this.overtimeSurcharges = new ArrayList<>();
+    }
 
     public void addNewSurcharge(Surcharge surcharge){
         surcharges.add(surcharge);
@@ -66,11 +71,11 @@ public class Employee {
 
 
 
-    public Long getTotalOvertimeSurchargeHours_NightHoliday() {
+    public Long getTotalOvertimeSurchargeHoursNightHoliday() {
         return getSumOfOvertimeSurchargeHoursByType(OvertimeSurchargeTypeEnum.NIGHT_HOLIDAY);
 
     }
-    public Long getTotalOvertimeSurchargeHours_Holiday() {
+    public Long getTotalOvertimeSurchargeHoursHoliday() {
         return getSumOfOvertimeSurchargeHoursByType(OvertimeSurchargeTypeEnum.HOLIDAY);
 
     }

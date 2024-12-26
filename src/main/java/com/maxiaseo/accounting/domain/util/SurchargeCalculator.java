@@ -10,6 +10,8 @@ import java.util.List;
 
 public class SurchargeCalculator {
 
+    private SurchargeCalculator(){}
+
     // Constants for defining night hours (e.g., 10 PM to 6 AM)
     private static final LocalTime NIGHT_START = LocalTime.of(21, 0);
     private static final LocalTime NIGHT_END = LocalTime.of(6, 0);

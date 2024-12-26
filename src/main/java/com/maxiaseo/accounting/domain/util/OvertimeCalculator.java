@@ -10,6 +10,9 @@ import java.util.List;
 
 public class OvertimeCalculator {
 
+    private OvertimeCalculator() {
+    }
+
     private static final LocalTime NIGHT_START = LocalTime.of(21, 0);
     private static final LocalTime NIGHT_END = LocalTime.of(6, 0);
 

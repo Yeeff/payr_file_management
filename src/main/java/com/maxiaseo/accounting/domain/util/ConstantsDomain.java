@@ -4,7 +4,7 @@ import java.util.Set;
 
 public class ConstantsDomain {
 
-    public static enum AbsenceReasonsEnum {
+    public enum AbsenceReasonsEnum {
         INC_ARL,        //INCAPACIDAD_ARL
         INC,            //INCAPACIDAD_CON_SOPORTE,
         INC_SIN_SOPR,   //INCAPACIDAD_SIN_SOPORTE,

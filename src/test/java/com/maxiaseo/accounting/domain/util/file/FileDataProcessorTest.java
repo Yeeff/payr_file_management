@@ -418,8 +418,8 @@ class FileDataProcessorTest {
         assertEquals(0, employee.getTotalOvertimeHoursHoliday());
         assertEquals(0, employee.getTotalOvertimeHoursNightHoliday());
 
-        assertEquals(8, employee.getTotalOvertimeSurchargeHours_Holiday());
-        assertEquals(4, employee.getTotalOvertimeSurchargeHours_NightHoliday());
+        assertEquals(8, employee.getTotalOvertimeSurchargeHoursHoliday());
+        assertEquals(4, employee.getTotalOvertimeSurchargeHoursNightHoliday());
 
     }
 
