@@ -64,12 +64,13 @@ public class FileDataProcessor {
                     if (dataRowList.get(j) != null) {
                         String cellValue = dataRowList.get(j);
 
-                        if (CellsValidator.isValidTimeRange(cellValue) || !cellValue.equals(AbsenceReasonsEnum.AUS)){
+                        if (CellsValidator.isValidTimeRange(cellValue) ){
                             TimeRange currentTimeRange = getInitTimeAndEndTime(cellValue, currentDate);
                             employee = processSchedule( currentTimeRange.getStartTime(), currentTimeRange.getEndTime(), employee);
 
-                            addHoursWorked(currentTimeRange);
-                        }
+                            addHoursWorkedBasedOnTimeRange(currentTimeRange);
+                        } else if(!cellValue.equals(AbsenceReasonsEnum.AUS.toString())  )
+                            addHoursWorkedBasedOnAbsentReason( 8L);
                     }
 
                     if(currentDate.getDayOfWeek() == DayOfWeek.SUNDAY)
@@ -243,7 +244,7 @@ public class FileDataProcessor {
         return new TimeRange(startTime, endTime);
     }
 
-    private void addHoursWorked(TimeRange currentTimeRange){
+    private void addHoursWorkedBasedOnTimeRange(TimeRange currentTimeRange){
         Long hoursWorkedPerDay = Duration.between(
                 currentTimeRange.getStartTime(), currentTimeRange.getEndTime() ).toHours();
 
@@ -251,6 +252,11 @@ public class FileDataProcessor {
             hoursWorkedPerWeek += MAX_HOURS_BY_DAY;
         else
             hoursWorkedPerWeek += hoursWorkedPerDay ;
+    }
+
+    private void addHoursWorkedBasedOnAbsentReason( Long hourToSum){
+
+            hoursWorkedPerWeek += hourToSum ;
     }
 
 }
