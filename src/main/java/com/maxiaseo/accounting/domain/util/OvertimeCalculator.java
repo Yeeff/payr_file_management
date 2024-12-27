@@ -18,7 +18,7 @@ public class OvertimeCalculator {
 
     private static final Long MAX_HOURS_BY_DAY = 8L;
 
-    private static final Long FIRST_HOUR_WORKED = 1l;
+    private static final Long FIRST_HOUR_WORKED = 1L;
 
     public static List<Overtime> getOvertimeList(LocalDateTime start, LocalDateTime end) {
 
