@@ -23,8 +23,8 @@ public class OvertimeSurchargeCalculator {
 
         List<OvertimeSurcharge> overtimeSurchargeList = new ArrayList<>();
 
-        OvertimeSurcharge overtimeSurchargeHoliday = OvertimeSurcharge.builder().quantityOfHours(0L).build();
-        OvertimeSurcharge overtimeSurchargeHolidayNight = OvertimeSurcharge.builder().quantityOfHours(0L).build();
+        OvertimeSurcharge overtimeSurchargeHoliday = new OvertimeSurcharge();
+        OvertimeSurcharge overtimeSurchargeHolidayNight = new OvertimeSurcharge();
 
         LocalDateTime currentTime = start.plusHours(FIRST_HOUR_WORKED );
 

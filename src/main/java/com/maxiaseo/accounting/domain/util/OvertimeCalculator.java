@@ -24,10 +24,10 @@ public class OvertimeCalculator {
 
         List<Overtime> overtimeList = new ArrayList<>();
 
-        Overtime overtimeDay = Overtime.builder().quantityOfHours(0L).build();
-        Overtime overtimeNight = Overtime.builder().quantityOfHours(0L).build();
-        Overtime overtimeHoliday = Overtime.builder().quantityOfHours(0L).build();
-        Overtime overtimeHolidayNight = Overtime.builder().quantityOfHours(0L).build();
+        Overtime overtimeDay = new Overtime();
+        Overtime overtimeNight =  new Overtime();
+        Overtime overtimeHoliday =  new Overtime();
+        Overtime overtimeHolidayNight =  new Overtime();
 
         LocalDateTime currentTime = start.plusHours(FIRST_HOUR_WORKED + MAX_HOURS_BY_DAY );
 

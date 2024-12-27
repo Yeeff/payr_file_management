@@ -24,9 +24,9 @@ public class SurchargeCalculator {
 
         List<Surcharge> surchargesList = new ArrayList<>();
 
-        Surcharge surchargeNight = Surcharge.builder().quantityOfHours(0L).build();
-        Surcharge surchargeHoliday = Surcharge.builder().quantityOfHours(0L).build();
-        Surcharge surchargeHolidayNight = Surcharge.builder().quantityOfHours(0L).build();
+        Surcharge surchargeNight = new Surcharge();
+        Surcharge surchargeHoliday = new Surcharge();
+        Surcharge surchargeHolidayNight = new Surcharge();
 
         LocalDateTime current = start.plusHours(FIRST_HOUR_WORKED);
 

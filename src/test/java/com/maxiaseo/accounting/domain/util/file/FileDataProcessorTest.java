@@ -342,7 +342,7 @@ class FileDataProcessorTest {
                         "12345678",
                         "JUAN PEREZ",
                         "DESC", // Sunday
-                        "86am a 2pm",
+                        "6am a 2pm",
                         "6am a 2pm",
                         "6am a 2pm",//
                         "6am a 2pm",

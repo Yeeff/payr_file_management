@@ -1,26 +1,18 @@
 package com.maxiaseo.accounting.domain.model;
 
-import com.maxiaseo.accounting.domain.util.SurchargeTypeEnum;
-import lombok.*;
+import com.maxiaseo.accounting.domain.util.ConstantsDomain.AbsenceReasonsEnum;
 
 import java.time.LocalDateTime;
 
-public class Surcharge {
+public class AbsenteeismReason {
+
     private LocalDateTime start;
     private LocalDateTime end;
     private Long quantityOfHours;
-    private SurchargeTypeEnum surchargeTypeEnum;
+    private AbsenceReasonsEnum absenceReasonsEnum;
 
-    public Surcharge() {
+    public AbsenteeismReason() {
         this.quantityOfHours = 0L;
-    }
-
-    public void increaseOneHour(){
-        quantityOfHours++;
-    }
-
-    public LocalDateTime getStart() {
-        return start;
     }
 
     public LocalDateTime getEnd() {
@@ -31,8 +23,12 @@ public class Surcharge {
         return quantityOfHours;
     }
 
-    public SurchargeTypeEnum getSurchargeTypeEnum() {
-        return surchargeTypeEnum;
+    public LocalDateTime getStart() {
+        return start;
+    }
+
+    public AbsenceReasonsEnum getAbsenceReasonsEnum() {
+        return absenceReasonsEnum;
     }
 
     public void setStart(LocalDateTime start) {
@@ -47,7 +43,7 @@ public class Surcharge {
         this.quantityOfHours = quantityOfHours;
     }
 
-    public void setSurchargeTypeEnum(SurchargeTypeEnum surchargeTypeEnum) {
-        this.surchargeTypeEnum = surchargeTypeEnum;
+    public void setAbsenceReasonsEnum(AbsenceReasonsEnum absenceReasonsEnum) {
+        this.absenceReasonsEnum = absenceReasonsEnum;
     }
 }

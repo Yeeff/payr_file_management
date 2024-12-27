@@ -3,25 +3,24 @@ package com.maxiaseo.accounting.domain.model;
 import com.maxiaseo.accounting.domain.util.OvertimeSurchargeTypeEnum;
 import com.maxiaseo.accounting.domain.util.OvertimeTypeEnum;
 import com.maxiaseo.accounting.domain.util.SurchargeTypeEnum;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
+
 public class Employee {
     private Long id;
     private String name;
     private List<Surcharge> surcharges;
     private List<Overtime> overtimes;
     private List<OvertimeSurcharge> overtimeSurcharges;
+    private List<AbsenteeismReason> absenteeismReasons;
 
     public Employee() {
         this.surcharges = new ArrayList<>();
         this.overtimes = new ArrayList<>();
         this.overtimeSurcharges = new ArrayList<>();
+        this.absenteeismReasons =new ArrayList<>();
     }
 
     public void addNewSurcharge(Surcharge surcharge){
@@ -34,6 +33,9 @@ public class Employee {
 
     public void addNewOverTimeSurcharge(OvertimeSurcharge overtimeSurcharge){
         overtimeSurcharges.add(overtimeSurcharge);
+    }
+    public void addNewAbsenteeismReason(AbsenteeismReason absenteeismReason) {
+        absenteeismReasons.add(absenteeismReason);
     }
 
 
@@ -102,5 +104,53 @@ public class Employee {
                 .filter(overtime -> overtime.getOvertimeTypeEnum() == type)
                 .mapToLong(Overtime::getQuantityOfHours)
                 .sum();
+    }
+
+    public void setAbsenteeismReasons(List<AbsenteeismReason> absenteeismReasons) {
+        this.absenteeismReasons = absenteeismReasons;
+    }
+
+    public List<AbsenteeismReason> getAbsenteeismReasons() {
+        return absenteeismReasons;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Surcharge> getSurcharges() {
+        return surcharges;
+    }
+
+    public List<Overtime> getOvertimes() {
+        return overtimes;
+    }
+
+    public List<OvertimeSurcharge> getOvertimeSurcharges() {
+        return overtimeSurcharges;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSurcharges(List<Surcharge> surcharges) {
+        this.surcharges = surcharges;
+    }
+
+    public void setOvertimes(List<Overtime> overtimes) {
+        this.overtimes = overtimes;
+    }
+
+    public void setOvertimeSurcharges(List<OvertimeSurcharge> overtimeSurcharges) {
+        this.overtimeSurcharges = overtimeSurcharges;
     }
 }

@@ -1,9 +1,6 @@
 package com.maxiaseo.accounting.domain.util.file;
 
-import com.maxiaseo.accounting.domain.model.Employee;
-import com.maxiaseo.accounting.domain.model.Overtime;
-import com.maxiaseo.accounting.domain.model.OvertimeSurcharge;
-import com.maxiaseo.accounting.domain.model.Surcharge;
+import com.maxiaseo.accounting.domain.model.*;
 import com.maxiaseo.accounting.domain.util.OvertimeCalculator;
 import com.maxiaseo.accounting.domain.util.OvertimeSurchargeCalculator;
 import com.maxiaseo.accounting.domain.util.SurchargeCalculator;
@@ -70,11 +67,13 @@ public class FileDataProcessor {
 
                     if (CellsValidator.isValidTimeRange(cellValue) ){
                         TimeRange currentTimeRange = getInitTimeAndEndTime(cellValue, currentDate);
-                        processSchedule( currentTimeRange.getStartTime(), currentTimeRange.getEndTime());
+                        addSurchargeOvertimesToEmployeeBasedOnTimeRange( currentTimeRange.getStartTime(), currentTimeRange.getEndTime());
 
                         addHoursWorkedBasedOnTimeRange(currentTimeRange);
-                    } else if(!cellValue.equals(AbsenceReasonsEnum.AUS.toString())  )
-                        addHoursWorkedBasedOnAbsentReason( 8L);
+                    } else if(!cellValue.equals(AbsenceReasonsEnum.AUS.toString())  ) {
+                        addHoursWorkedBasedOnAbsentReason(MAX_HOURS_BY_DAY);
+                        addAbsenteeismReasonToEmployee(cellValue);
+                    }
                 }
 
                 if(currentDate.getDayOfWeek() == DayOfWeek.SUNDAY)
@@ -137,7 +136,7 @@ public class FileDataProcessor {
 
     }
 
-    private void processSchedule( LocalDateTime startTime, LocalDateTime endTime) {
+    private void addSurchargeOvertimesToEmployeeBasedOnTimeRange(LocalDateTime startTime, LocalDateTime endTime) {
 
         if (hoursWorkedPerWeek >= MAX_HOURS_BY_WEEK && startTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
             addOvertimeSurchargeToEmployee(startTime, endTime);
@@ -220,6 +219,13 @@ public class FileDataProcessor {
         }
     }
 
+    private void addAbsenteeismReasonToEmployee(String reason){
+        AbsenteeismReason absenteeismReason = new AbsenteeismReason();
+        absenteeismReason.setAbsenceReasonsEnum(AbsenceReasonsEnum.valueOf(reason));
+        absenteeismReason.setQuantityOfHours(MAX_HOURS_BY_DAY);
+        employee.addNewAbsenteeismReason(absenteeismReason);
+    }
+
     //MethodsToValidateFormat
 
     private Boolean isAnEmptyLine(List<String> dataRowList){
@@ -298,6 +304,7 @@ public class FileDataProcessor {
         }
 
     }
+
 
     class TimeRange {
         private final LocalDateTime startTime;

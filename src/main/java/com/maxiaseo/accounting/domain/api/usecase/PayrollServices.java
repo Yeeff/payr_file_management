@@ -28,7 +28,7 @@ public class PayrollServices implements IPayrollServicesPort {
 
         List<Employee> employees = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay);
 
-        dataInMemory = excelManagerAdapter.updateEmployeeDataInExcel(dataInMemory,employees );
+        dataInMemory = excelManagerAdapter.updateEmployeeDataInExcel(dataInMemory, employees );
 
         FileAdministrator.overwriteTempFile(tempFileName, dataInMemory);
 
