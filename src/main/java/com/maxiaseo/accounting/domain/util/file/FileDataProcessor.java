@@ -41,6 +41,10 @@ public class FileDataProcessor {
         errorsMap = new HashMap<>();
     }
 
+    public void resetErrorsMap() {
+        errorsMap.clear();
+    }
+
     public  List<Employee> extractEmployeeData(List<List<String>> listOfListData, Integer year, Integer month, Integer initDay){
 
         LocalDate initDateOfFortnight = LocalDate.of(year,month, initDay);

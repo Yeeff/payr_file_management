@@ -41,10 +41,13 @@ public class PayrollServices implements IPayrollServicesPort {
 
         List<List<String>> listOfListData = excelManagerAdapter.getDataFromExcelFileInMemory(dataInMemory);
 
+        fileDataProcessor.resetErrorsMap();
+
         Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListData);
 
-        if( ! errorsMap.isEmpty())
-            throw new IncorrectFormatExcelValuesException("", errorsMap);
+        if( ! errorsMap.isEmpty()) {
+            throw new IncorrectFormatExcelValuesException("", errorsMap );
+        }
 
         return FileAdministrator.saveTemporaryFileFromInMemoryBytes(dataInMemory);
 
