@@ -15,6 +15,12 @@ public class AbsenteeismReason {
         this.quantityOfHours = 0L;
     }
 
+    public AbsenteeismReason(AbsenceReasonsEnum absenceReasons, Long quantityOfHours) {
+        this.absenceReasonsEnum = absenceReasons;
+        this.quantityOfHours = quantityOfHours;
+    }
+
+
     public LocalDateTime getEnd() {
         return end;
     }

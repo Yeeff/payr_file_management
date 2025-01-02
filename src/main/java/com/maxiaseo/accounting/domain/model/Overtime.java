@@ -18,6 +18,12 @@ public class Overtime {
         this.quantityOfHours = 0L;
     }
 
+    public Overtime(OvertimeTypeEnum overtimeType, Long quantityOfHours) {
+        this.overtimeTypeEnum = overtimeType;
+        this.quantityOfHours = quantityOfHours;
+    }
+
+
     public void increaseOneHour(){
         quantityOfHours++;
     }

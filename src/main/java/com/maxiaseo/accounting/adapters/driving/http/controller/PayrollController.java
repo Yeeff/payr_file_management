@@ -5,6 +5,7 @@ import com.maxiaseo.accounting.domain.api.IPayrollServicesPort;
 import com.maxiaseo.accounting.domain.model.Employee;
 import com.maxiaseo.accounting.domain.api.usecase.PayrollServices;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.startup.PasswdUserDatabase;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -86,6 +87,12 @@ public class PayrollController {
                     .body(fileContent);
         }
         return ResponseEntity.notFound().build();
+    }
+    @GetMapping("/process-siigoformat")
+    public ResponseEntity<String> processSiigoFormat() throws IOException {
+        File auxFile;
+        auxFile = payrollServices.processSiigoFormat(tempFile.getName(), 2024, 9, 1);
+        return ResponseEntity.ok(auxFile.getName());
     }
 
 }

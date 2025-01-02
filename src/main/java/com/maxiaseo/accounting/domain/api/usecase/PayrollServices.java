@@ -49,7 +49,7 @@ public class PayrollServices implements IPayrollServicesPort {
             throw new IncorrectFormatExcelValuesException("", errorsMap );
         }
 
-        return FileAdministrator.saveTemporaryFileFromInMemoryBytes(dataInMemory);
+        return FileAdministrator.saveTemporaryFileFromInMemoryBytes(dataInMemory, "uploaded-");
 
     }
 
@@ -59,7 +59,22 @@ public class PayrollServices implements IPayrollServicesPort {
         }
     }
 
+    @Override
+    public File processSiigoFormat(String tempFileName,  Integer year, Integer month, Integer initDay) throws IOException {
 
+        byte[] dataInMemory = FileAdministrator.getDataInMemoryFromTempFileByName(tempFileName);
+
+        List<List<String>> listOfListData = excelManagerAdapter.getDataFromExcelFileInMemory(dataInMemory);
+
+        List<Employee> employees = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay);
+
+        dataInMemory = FileAdministrator.getSiigoFormat();
+
+        dataInMemory = excelManagerAdapter.populateSiigtoFormat(employees, dataInMemory);
+
+        return FileAdministrator.saveTemporaryFileFromInMemoryBytes( dataInMemory, "siigoPopulate-");
+
+    }
 
 
 }

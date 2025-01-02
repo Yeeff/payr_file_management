@@ -14,4 +14,5 @@ public interface IPayrollServicesPort {
 
     void deleteTemporaryFile(File tempFile);
 
+    File processSiigoFormat(String tempFileName, Integer year, Integer month, Integer initDay) throws IOException;
 }

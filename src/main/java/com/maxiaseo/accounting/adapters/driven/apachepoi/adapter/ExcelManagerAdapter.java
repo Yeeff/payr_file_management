@@ -1,7 +1,7 @@
 package com.maxiaseo.accounting.adapters.driven.apachepoi.adapter;
 
 import com.maxiaseo.accounting.configuration.Constants;
-import com.maxiaseo.accounting.domain.model.Employee;
+import com.maxiaseo.accounting.domain.model.*;
 import com.maxiaseo.accounting.domain.spi.IExelManagerPort;
 import com.maxiaseo.accounting.domain.util.ConstantsDomain;
 import org.apache.poi.ss.usermodel.*;
@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ExcelManagerAdapter implements IExelManagerPort {
+
+    private final int INDEX_EMPLOYEE_DOCUMENT_ID = 1;
+    private final int INDEX_EMPLOYEE_NEW = 2;
 
     Workbook workbook;
     Sheet sheet = null;
@@ -85,7 +88,6 @@ public class ExcelManagerAdapter implements IExelManagerPort {
         return outputStream.toByteArray();
     }
 
-
     public List<List<String>> getDataFromExcelFileInMemory(byte[] inMemoryFile) throws IOException {
         try (InputStream workbookStream = new ByteArrayInputStream(inMemoryFile)) {
             workbook = WorkbookFactory.create(workbookStream);
@@ -124,6 +126,122 @@ public class ExcelManagerAdapter implements IExelManagerPort {
         return result;
     }
 
+    public byte[] populateSiigtoFormat(List<Employee> employees,  byte[] siigoFormat) throws IOException {
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(siigoFormat);
+        Workbook workbook = new XSSFWorkbook(inputStream);
+        Sheet sheet = workbook.getSheetAt(0);
+
+
+        int rowIndex = 5;
+
+        // Iterate through employees and generate rows
+        for (Employee employee : employees) {
+            // Add surcharge records
+            for (Surcharge surcharge : employee.getSurcharges()) {
+                Row row = sheet.createRow(rowIndex++);
+                row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID).setCellValue(employee.getId());
+                row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getSurchargeDescription(surcharge));
+            }
+
+            // Add overtime records
+            for (Overtime overtime : employee.getOvertimes()) {
+                Row row = sheet.createRow(rowIndex++);
+                row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID   ).setCellValue(employee.getId());
+                row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getOvertimeDescription(overtime));
+            }
+
+            // Add overtime surcharge records
+            for (OvertimeSurcharge overtimeSurcharge : employee.getOvertimeSurcharges()) {
+                Row row = sheet.createRow(rowIndex++);
+                row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID).setCellValue(employee.getId());
+                row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getOvertimeSurchargeDescription(overtimeSurcharge));
+            }
+
+            // Add absenteeism reason records
+            for (AbsenteeismReason absenteeismReason : employee.getAbsenteeismReasons()) {
+                Row row = sheet.createRow(rowIndex++);
+                row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID).setCellValue(employee.getId());
+                row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getAbsenteeismReasonDescription(absenteeismReason));
+            }
+        }
+
+        // Adjust column width
+        sheet.autoSizeColumn(INDEX_EMPLOYEE_DOCUMENT_ID);
+        sheet.autoSizeColumn(INDEX_EMPLOYEE_NEW);
+
+        // Write workbook to a byte array
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+
+        return outputStream.toByteArray();
+    }
+
+    // Helper methods to generate descriptions
+    private String getSurchargeDescription(Surcharge surcharge) {
+        switch (surcharge.getSurchargeTypeEnum()) {
+            case NIGHT:
+                return ConstantsDomain.SURCHARGE_NIGHT_SIIGO_NEW;
+            case HOLIDAY:
+                return ConstantsDomain.SURCHARGE_HOLIDAY_SIIGO_NEW;
+            case NIGHT_HOLIDAY:
+                return ConstantsDomain.SURCHARGE_NIGHT_HOLIDAY_SIIGO_NEW;
+            default:
+                return "Surcharge - Ingreso";
+        }
+    }
+
+    private String getOvertimeDescription(Overtime overtime) {
+        switch (overtime.getOvertimeTypeEnum()) {
+            case DAY:
+                return ConstantsDomain.OVERTIME_DAY_SIIGO_NEW ;
+            case NIGHT:
+                return ConstantsDomain.OVERTIME_NIGHT_SIIGO_NEW;
+            case HOLIDAY:
+                return ConstantsDomain.OVERTIME_HOLIDAY_SIIGO_NEW;
+            case NIGHT_HOLIDAY:
+                return ConstantsDomain.OVERTIME_NIGHT_HOLIDAY_SIIGO_NEW;
+            default:
+                return "Overtime - Ingreso";
+        }
+    }
+
+    private String getOvertimeSurchargeDescription(OvertimeSurcharge overtimeSurcharge) {
+        switch (overtimeSurcharge.getOvertimeSurchargeTypeEnum()) {
+            case NIGHT_HOLIDAY:
+                return ConstantsDomain.SURCHARGE_OVERTIME_NIGHT_HOLIDAY_SIIGO_NEW;
+            case HOLIDAY:
+                return ConstantsDomain.SURCHARGE_OVERTIME_HOLIDAY_SIIGO_NEW;
+            default:
+                return "Overtime Surcharge - Ingreso";
+        }
+    }
+
+    private String getAbsenteeismReasonDescription(AbsenteeismReason absenteeismReason) {
+        switch (absenteeismReason.getAbsenceReasonsEnum()) {
+            case INC_ARL:
+                return ConstantsDomain.ABSENTEEISM_INCAPACITY_ARL;
+            case INC:
+                return ConstantsDomain.ABSENTEEISM_INCAPACITY_WITH_SUPPORT;
+            case INC_SIN_SOPR:
+                return ConstantsDomain.ABSENTEEISM_INCAPACITY_WITHOUT_SUPPORT;
+            case PNR:
+                return ConstantsDomain.ABSENTEEISM_UNPAID_LEAVE;
+            case LR:
+                return ConstantsDomain.ABSENTEEISM_PAID_LEAVE;
+            case AUS:
+                return ConstantsDomain.ABSENTEEISM;
+            case EPS:
+                return ConstantsDomain.ABSENTEEISM_EPS_COLLABORATOR;
+            case RET:
+                return ConstantsDomain.ABSENTEEISM_QUIT;
+            case DESC:
+                return ConstantsDomain.ABSENTEEISM_DAY_OFF;
+            default:
+                return "Novedad - Ingreso";
+        }
+    }
 
     private String getCellValue(Cell cell) {
         if (cell == null) {

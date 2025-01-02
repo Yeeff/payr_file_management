@@ -17,6 +17,11 @@ public class OvertimeSurcharge {
         this.quantityOfHours = 0L;
     }
 
+    public OvertimeSurcharge(OvertimeSurchargeTypeEnum overtimeSurchargeType, Long quantityOfHours) {
+        this.overtimeSurchargeTypeEnum = overtimeSurchargeType;
+        this.quantityOfHours = quantityOfHours;
+    }
+
     public void increaseOneHour(){
         quantityOfHours++;
     }

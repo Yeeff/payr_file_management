@@ -1,5 +1,7 @@
 package com.maxiaseo.accounting.domain.util.file;
 
+import com.maxiaseo.accounting.domain.util.ConstantsDomain;
+
 import java.io.*;
 
 public class FileAdministrator {
@@ -33,6 +35,17 @@ public class FileAdministrator {
         return saveInMemory(fis);
     }
 
+    public static byte[] getSiigoFormat()throws IOException{
+        String tempDir = System.getProperty("java.io.tmpdir");
+        File tempFile = new File(tempDir, ConstantsDomain.SIIGO_FORMAT_NAME);
+
+        FileInputStream fis;
+
+        fis = new FileInputStream(tempFile);
+
+        return saveInMemory(fis);
+    }
+
     public static byte[] saveInMemory(InputStream inputStream) throws IOException {
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -47,9 +60,9 @@ public class FileAdministrator {
     }
 
 
-    public static File saveTemporaryFileFromInMemoryBytes(byte[] inMemoryInputStreamBytesFile) throws IOException {
+    public static File saveTemporaryFileFromInMemoryBytes(byte[] inMemoryInputStreamBytesFile, String prefix) throws IOException {
 
-        File tempFile = File.createTempFile("uploaded-", ".xlsx");
+        File tempFile = File.createTempFile( prefix, ".xlsx");
         try (FileOutputStream fileOut = new FileOutputStream(tempFile)) {
             fileOut.write(inMemoryInputStreamBytesFile);
         }

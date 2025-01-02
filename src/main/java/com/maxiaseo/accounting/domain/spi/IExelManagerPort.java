@@ -10,4 +10,7 @@ public interface IExelManagerPort {
     List<List<String>> getDataFromExcelFileInMemory(byte[] inMemoryFile)throws IOException;
 
     byte[] updateEmployeeDataInExcel(byte[] excelData, List<Employee> employees) throws IOException;
-}
+
+    byte[] populateSiigtoFormat(List<Employee> employees, byte[] siigoFormat) throws IOException;
+
+    }
