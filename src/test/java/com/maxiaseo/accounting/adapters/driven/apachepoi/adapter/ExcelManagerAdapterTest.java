@@ -2,9 +2,7 @@ package com.maxiaseo.accounting.adapters.driven.apachepoi.adapter;
 
 import com.maxiaseo.accounting.domain.model.*;
 import com.maxiaseo.accounting.domain.util.ConstantsDomain;
-import com.maxiaseo.accounting.domain.util.OvertimeSurchargeTypeEnum;
-import com.maxiaseo.accounting.domain.util.OvertimeTypeEnum;
-import com.maxiaseo.accounting.domain.util.SurchargeTypeEnum;
+import com.maxiaseo.accounting.domain.util.ConstantsDomain.SurchargeTypeEnum;
 import com.maxiaseo.accounting.domain.util.file.FileAdministrator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -34,13 +32,13 @@ class ExcelManagerAdapterTest {
         employee1.addNewSurcharge(new Surcharge(SurchargeTypeEnum.HOLIDAY, 2L));
         employee1.addNewSurcharge(new Surcharge(SurchargeTypeEnum.NIGHT_HOLIDAY, 2L));
 
-        employee1.addNewOverTime(new Overtime(OvertimeTypeEnum.DAY, 3L));
-        employee1.addNewOverTime(new Overtime(OvertimeTypeEnum.NIGHT, 3L));
-        employee1.addNewOverTime(new Overtime(OvertimeTypeEnum.HOLIDAY, 3L));
-        employee1.addNewOverTime(new Overtime(OvertimeTypeEnum.NIGHT_HOLIDAY, 3L));
+        employee1.addNewOverTime(new Overtime(ConstantsDomain.OvertimeTypeEnum.DAY, 3L));
+        employee1.addNewOverTime(new Overtime(ConstantsDomain.OvertimeTypeEnum.NIGHT, 3L));
+        employee1.addNewOverTime(new Overtime(ConstantsDomain.OvertimeTypeEnum.HOLIDAY, 3L));
+        employee1.addNewOverTime(new Overtime(ConstantsDomain.OvertimeTypeEnum.NIGHT_HOLIDAY, 3L));
 
-        employee1.addNewOverTimeSurcharge(new OvertimeSurcharge(OvertimeSurchargeTypeEnum.HOLIDAY, 1L));
-        employee1.addNewOverTimeSurcharge(new OvertimeSurcharge(OvertimeSurchargeTypeEnum.NIGHT_HOLIDAY, 1L));
+        employee1.addNewOverTimeSurcharge(new OvertimeSurcharge(ConstantsDomain.OvertimeSurchargeTypeEnum.HOLIDAY, 1L));
+        employee1.addNewOverTimeSurcharge(new OvertimeSurcharge(ConstantsDomain.OvertimeSurchargeTypeEnum.NIGHT_HOLIDAY, 1L));
 
         employee1.addNewAbsenteeismReason(new AbsenteeismReason(ConstantsDomain.AbsenceReasonsEnum.INC_ARL, 2L));
         employee1.addNewAbsenteeismReason(new AbsenteeismReason(ConstantsDomain.AbsenceReasonsEnum.INC, 2L));
@@ -112,7 +110,7 @@ class ExcelManagerAdapterTest {
         Employee employee1 = new Employee();
         employee1.setId(12345678L);
         employee1.addNewSurcharge(new Surcharge(SurchargeTypeEnum.NIGHT, 2L));
-        employee1.addNewOverTime(new Overtime(OvertimeTypeEnum.DAY, 3L));
+        employee1.addNewOverTime(new Overtime(ConstantsDomain.OvertimeTypeEnum.DAY, 3L));
         employees.add(employee1);
 
         // Employee 2
@@ -125,7 +123,7 @@ class ExcelManagerAdapterTest {
         // Employee 3
         Employee employee3 = new Employee();
         employee3.setId(34567890L);
-        employee3.addNewOverTimeSurcharge(new OvertimeSurcharge(OvertimeSurchargeTypeEnum.NIGHT_HOLIDAY, 1L));
+        employee3.addNewOverTimeSurcharge(new OvertimeSurcharge(ConstantsDomain.OvertimeSurchargeTypeEnum.NIGHT_HOLIDAY, 1L));
         employee3.addNewAbsenteeismReason(new AbsenteeismReason(ConstantsDomain.AbsenceReasonsEnum.LR, 1L));
         employees.add(employee3);
 

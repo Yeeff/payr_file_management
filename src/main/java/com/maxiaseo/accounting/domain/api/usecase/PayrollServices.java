@@ -3,21 +3,27 @@ package com.maxiaseo.accounting.domain.api.usecase;
 import com.maxiaseo.accounting.domain.api.IPayrollServicesPort;
 import com.maxiaseo.accounting.domain.exception.IncorrectFormatExcelValuesException;
 import com.maxiaseo.accounting.domain.model.Employee;
+import com.maxiaseo.accounting.domain.model.FileModel;
 import com.maxiaseo.accounting.domain.spi.IExelManagerPort;
+import com.maxiaseo.accounting.domain.spi.IFilePersistencePort;
 import com.maxiaseo.accounting.domain.util.file.FileAdministrator;
 import com.maxiaseo.accounting.domain.util.file.FileDataProcessor;
 
 import java.io.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class PayrollServices implements IPayrollServicesPort {
 
     private final IExelManagerPort excelManagerAdapter;
     private final FileDataProcessor fileDataProcessor;
+    private final IFilePersistencePort filePersistence;
 
-    public PayrollServices(IExelManagerPort excelManagerAdapter,  FileDataProcessor fileDataProcessor) {
+    public PayrollServices(IExelManagerPort excelManagerAdapter, FileDataProcessor fileDataProcessor, IFilePersistencePort filePersistencePort) {
         this.excelManagerAdapter = excelManagerAdapter;
-        this.fileDataProcessor =  fileDataProcessor;
+        this.fileDataProcessor = fileDataProcessor;
+        this.filePersistence = filePersistencePort;
     }
 
     public List<Employee> handleFileUpload( String tempFileName, Integer year, Integer month, Integer initDay) throws IOException {
@@ -35,7 +41,7 @@ public class PayrollServices implements IPayrollServicesPort {
         return employees;
     }
 
-    public File saveFile(InputStream fis,Integer year,Integer month,Integer day) throws IOException {
+    public FileModel saveFile(InputStream fis,Integer year,Integer month,Integer day) throws IOException {
 
         byte[] dataInMemory = FileAdministrator.saveInMemory(fis);
 
@@ -49,14 +55,22 @@ public class PayrollServices implements IPayrollServicesPort {
             throw new IncorrectFormatExcelValuesException("", errorsMap );
         }
 
-        return FileAdministrator.saveTemporaryFileFromInMemoryBytes(dataInMemory, "uploaded-");
+        File fileSaved = FileAdministrator.saveTemporaryFileFromInMemoryBytes(dataInMemory, "uploaded-");
+
+        FileModel fileModelSaved = new FileModel();
+        fileModelSaved.setName(fileSaved.getName());
+        fileModelSaved.setUploadTime(LocalDateTime.now());
+        fileModelSaved.setFortNightDate(LocalDate.of(year,month,day));
+
+        filePersistence.addFile(fileModelSaved);
+
+        return fileModelSaved;
 
     }
 
-    public void deleteTemporaryFile(File tempFile) {
-        if (tempFile.exists()) {
-            tempFile.delete();  // Remove the file from the temporary location
-        }
+    public void deleteTemporaryFile(String fileName) {
+        filePersistence.deleteFile(fileName);
+        FileAdministrator.deleteTempFileByName (fileName);
     }
 
     @Override
@@ -74,6 +88,11 @@ public class PayrollServices implements IPayrollServicesPort {
 
         return FileAdministrator.saveTemporaryFileFromInMemoryBytes( dataInMemory, "siigoPopulate-");
 
+    }
+
+    @Override
+    public List<FileModel> getFiles() {
+        return filePersistence.getFiles();
     }
 
 

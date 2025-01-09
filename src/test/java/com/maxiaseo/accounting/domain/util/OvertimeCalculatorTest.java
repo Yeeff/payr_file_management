@@ -1,8 +1,8 @@
 package com.maxiaseo.accounting.domain.util;
 
 import com.maxiaseo.accounting.domain.model.Overtime;
-import com.maxiaseo.accounting.domain.util.OvertimeCalculator;
-import com.maxiaseo.accounting.domain.util.OvertimeTypeEnum;
+import com.maxiaseo.accounting.domain.util.ConstantsDomain.OvertimeTypeEnum;
+import com.maxiaseo.accounting.domain.util.processor.OvertimeCalculator;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

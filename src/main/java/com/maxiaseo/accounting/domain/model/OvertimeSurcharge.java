@@ -1,9 +1,6 @@
 package com.maxiaseo.accounting.domain.model;
 
-import com.maxiaseo.accounting.domain.util.OvertimeSurchargeTypeEnum;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.maxiaseo.accounting.domain.util.ConstantsDomain.OvertimeSurchargeTypeEnum;
 
 import java.time.LocalDateTime;
 

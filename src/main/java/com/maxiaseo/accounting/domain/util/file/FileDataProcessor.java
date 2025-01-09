@@ -1,9 +1,9 @@
 package com.maxiaseo.accounting.domain.util.file;
 
 import com.maxiaseo.accounting.domain.model.*;
-import com.maxiaseo.accounting.domain.util.OvertimeCalculator;
-import com.maxiaseo.accounting.domain.util.OvertimeSurchargeCalculator;
-import com.maxiaseo.accounting.domain.util.SurchargeCalculator;
+import com.maxiaseo.accounting.domain.util.processor.OvertimeCalculator;
+import com.maxiaseo.accounting.domain.util.processor.OvertimeSurchargeCalculator;
+import com.maxiaseo.accounting.domain.util.processor.SurchargeCalculator;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -16,11 +16,6 @@ import static com.maxiaseo.accounting.domain.util.ConstantsDomain.FIRST_DAY_OF_S
 
 public class FileDataProcessor {
 
-    private static final Long MAX_HOURS_BY_DAY = 8L;
-    private static final Long MAX_HOURS_BY_WEEK = 48L;
-
-    private static final Integer FIRST_DAY_OF_MONTH = 1;
-    private static final Integer LAST_DAY_OF_FIRST_FORTNIGHT = 15;
 
     private Employee employee;
 
@@ -120,7 +115,7 @@ public class FileDataProcessor {
 
                 if (!CellsValidator.isValidTimeRange(cellValue) && !CellsValidator.isValidAbsenceReasons(cellValue)) {
                     errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
-                            String.format("-> %s <- no, es un valor valido",
+                            String.format(INVALID_VALUE_MESSAGE_ERROR,
                                     cellValue
                             ));
                 }
@@ -248,7 +243,7 @@ public class FileDataProcessor {
         String employeeName = dataRowList.get(EMPLOYEE_NAME_INDEX);
         if(employeeName.equals("")){
             errorsMap.put(CellsValidator.getExcelCoordinate(i ,EMPLOYEE_NAME_INDEX)
-                    , "El campo nombre no puede estar vacio.");
+                    , EMPTY_NAME_VALUE_MESSAGE_ERROR);
         }
     }
 
@@ -256,7 +251,7 @@ public class FileDataProcessor {
         String employeeDocumentId =  dataRowList.get(EMPLOYEE_DOCUMENT_ID_INDEX) ;
         if(!CellsValidator.isANumber(employeeDocumentId)){
             errorsMap.put( CellsValidator.getExcelCoordinate(i, EMPLOYEE_DOCUMENT_ID_INDEX),
-                    String.format("El valor '%s' no es válido como numero de identificacion del empleado.",
+                    String.format(DOCUMENT_ID_VALUE_MESSAGE_ERROR,
                             employeeDocumentId
                     ));
         }
@@ -268,7 +263,7 @@ public class FileDataProcessor {
             if(currentDate.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT){
                 if(!cellValue.equals("")){
                     errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
-                            String.format("El ultimo dia la quincena debe ser 15 pero después de esa columana se encontro el valor: %s",
+                            String.format(LAST_VALUE_FIRST_FORTNIGHT_MESSAGE_ERROR,
                                     cellValue
                             ));
                 }
@@ -281,7 +276,7 @@ public class FileDataProcessor {
 
             if(!cellValue.equals("")){
                 errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
-                        String.format("El ultimo dia de %s es %s pero después de esa columana se encontro el valor: %s",
+                        String.format(LAST_VALUE_SECOND_FORTNIGHT_MESSAGE_ERROR,
                                 initDateOfFortnight.getMonth(),
                                 initDateOfFortnight.with(TemporalAdjusters.lastDayOfMonth()).getDayOfMonth(),
                                 cellValue
@@ -297,10 +292,10 @@ public class FileDataProcessor {
 
         if(initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_FIRST_FORTNIGHT){
             if(currentDate.getDayOfMonth() <= LAST_DAY_OF_FIRST_FORTNIGHT)
-                errorsMap.put(CellsValidator.getExcelRow(i), "La fila " + i + " no contiene la candidad de dias correspondiente de la primera quincena");
+                errorsMap.put(CellsValidator.getExcelRow(i), String.format(NOT_CORRESPONDING_QUANTITY_OF_DAYS_FOR_FORTNIGHT_MESSAGE_ERROR,i));
         }else if (initDateOfFortnight.getDayOfMonth() == FIRST_DAY_OF_SECOND_FORTNIGHT &&
                 currentDate.getDayOfMonth() <= lastDayOfSecondFortnight && currentDate.getDayOfMonth() > FIRST_DAY_OF_SECOND_FORTNIGHT ){
-            errorsMap.put(CellsValidator.getExcelRow(i), "La fila " + i + " no contiene la candidad de dias correspondiente a la segunda quincena de la fecha indicada");
+            errorsMap.put(CellsValidator.getExcelRow(i), String.format(NOT_CORRESPONDING_QUANTITY_OF_DAYS_FOR_FORTNIGHT_MESSAGE_ERROR,i));
         }
 
     }

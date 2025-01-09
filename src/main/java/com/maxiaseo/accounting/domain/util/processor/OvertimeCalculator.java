@@ -1,6 +1,7 @@
-package com.maxiaseo.accounting.domain.util;
+package com.maxiaseo.accounting.domain.util.processor;
 
 import com.maxiaseo.accounting.domain.model.Overtime;
+import com.maxiaseo.accounting.domain.util.ConstantsDomain.OvertimeTypeEnum;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -8,17 +9,13 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.maxiaseo.accounting.domain.util.ConstantsDomain.*;
+
 public class OvertimeCalculator {
 
     private OvertimeCalculator() {
     }
 
-    private static final LocalTime NIGHT_START = LocalTime.of(21, 0);
-    private static final LocalTime NIGHT_END = LocalTime.of(6, 0);
-
-    private static final Long MAX_HOURS_BY_DAY = 8L;
-
-    private static final Long FIRST_HOUR_WORKED = 1L;
 
     public static List<Overtime> getOvertimeList(LocalDateTime start, LocalDateTime end) {
 

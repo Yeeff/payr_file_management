@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.maxiaseo.accounting.domain.util.ConstantsDomain.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -35,22 +36,22 @@ class FileDataProcessorTest {
         assertEquals(6, errorsMap.size()); // Ensure 4 errors are found
 
         assertTrue(errorsMap.containsKey("B2"));
-        assertEquals("El campo nombre no puede estar vacio.", errorsMap.get("B2"));
+        assertEquals(EMPTY_NAME_VALUE_MESSAGE_ERROR, errorsMap.get("B2"));
 
         assertTrue(errorsMap.containsKey("A2"));
-        assertEquals("El valor '15326844a' no es válido como numero de identificacion del empleado.", errorsMap.get("A2"));
+        assertEquals(String.format(DOCUMENT_ID_VALUE_MESSAGE_ERROR, "15326844a"), errorsMap.get("A2"));
 
         assertTrue(errorsMap.containsKey("C2"));
-        assertEquals("-> DESk <- no, es un valor valido", errorsMap.get("C2"));
+        assertEquals(String.format(INVALID_VALUE_MESSAGE_ERROR,"DESk"), errorsMap.get("C2"));
 
         assertTrue(errorsMap.containsKey("G2"));
-        assertEquals("-> 7am a 4p <- no, es un valor valido", errorsMap.get("G2"));
+        assertEquals(String.format(INVALID_VALUE_MESSAGE_ERROR,"7am a 4p"), errorsMap.get("G2"));
 
         assertTrue(errorsMap.containsKey("Q2"));
-        assertEquals("-> 7:30 a 4 <- no, es un valor valido", errorsMap.get("Q2"));
+        assertEquals(String.format(INVALID_VALUE_MESSAGE_ERROR,"7:30 a 4"), errorsMap.get("Q2"));
 
         assertTrue(errorsMap.containsKey("R2"));
-        assertEquals("El ultimo dia la quincena debe ser 15 pero después de esa columana se encontro el valor: extra data", errorsMap.get("R2"));
+        assertEquals(String.format(LAST_VALUE_FIRST_FORTNIGHT_MESSAGE_ERROR,"extra data"), errorsMap.get("R2"));
     }
 
     @Test
@@ -75,19 +76,19 @@ class FileDataProcessorTest {
         assertEquals(5, errorsMap.size()); // Ensure 4 errors are found
 
         assertTrue(errorsMap.containsKey("B2"));
-        assertEquals("El campo nombre no puede estar vacio.", errorsMap.get("B2"));
+        assertEquals(EMPTY_NAME_VALUE_MESSAGE_ERROR, errorsMap.get("B2"));
 
         assertTrue(errorsMap.containsKey("A2"));
-        assertEquals("El valor '1532x6844' no es válido como numero de identificacion del empleado.", errorsMap.get("A2"));
+        assertEquals(String.format(DOCUMENT_ID_VALUE_MESSAGE_ERROR,"1532x6844"), errorsMap.get("A2"));
 
         assertTrue(errorsMap.containsKey("M2"));
-        assertEquals("-> am a 4pm <- no, es un valor valido", errorsMap.get("M2"));
+        assertEquals(String.format(INVALID_VALUE_MESSAGE_ERROR,"am a 4pm"), errorsMap.get("M2"));
 
         assertTrue(errorsMap.containsKey("Q2"));
-        assertEquals("-> 7:30 a 4 <- no, es un valor valido", errorsMap.get("Q2"));
+        assertEquals( String.format(INVALID_VALUE_MESSAGE_ERROR, "7:30 a 4"), errorsMap.get("Q2"));
 
         assertTrue(errorsMap.containsKey("R2"));
-        assertEquals("El ultimo dia de SEPTEMBER es 30 pero después de esa columana se encontro el valor: extra data", errorsMap.get("R2"));
+        assertEquals(String.format(LAST_VALUE_SECOND_FORTNIGHT_MESSAGE_ERROR,"SEPTEMBER","30","extra data"), errorsMap.get("R2"));
     }
 
     @Test
@@ -131,7 +132,7 @@ class FileDataProcessorTest {
         assertEquals(1, errorsMap.size()); // Ensure 4 errors are found
 
         assertTrue(errorsMap.containsKey("2"));
-        assertEquals("La fila 1 no contiene la candidad de dias correspondiente de la primera quincena", errorsMap.get("2"));
+        assertEquals(String.format(NOT_CORRESPONDING_QUANTITY_OF_DAYS_FOR_FORTNIGHT_MESSAGE_ERROR, 1), errorsMap.get("2"));
     }
 
     @Test
@@ -155,7 +156,7 @@ class FileDataProcessorTest {
         assertEquals(1, errorsMap.size()); // Ensure 4 errors are found
 
         assertTrue(errorsMap.containsKey("2"));
-        assertEquals("La fila 1 no contiene la candidad de dias correspondiente a la segunda quincena de la fecha indicada", errorsMap.get("2"));
+        assertEquals(String.format(NOT_CORRESPONDING_QUANTITY_OF_DAYS_FOR_FORTNIGHT_MESSAGE_ERROR,1), errorsMap.get("2"));
     }
 
     @Test

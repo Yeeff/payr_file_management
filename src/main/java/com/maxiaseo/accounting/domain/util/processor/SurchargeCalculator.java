@@ -1,6 +1,7 @@
-package com.maxiaseo.accounting.domain.util;
+package com.maxiaseo.accounting.domain.util.processor;
 
 import com.maxiaseo.accounting.domain.model.Surcharge;
+import com.maxiaseo.accounting.domain.util.ConstantsDomain.SurchargeTypeEnum;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -8,17 +9,12 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.maxiaseo.accounting.domain.util.ConstantsDomain.*;
+
 public class SurchargeCalculator {
 
     private SurchargeCalculator(){}
 
-    // Constants for defining night hours (e.g., 10 PM to 6 AM)
-    private static final LocalTime NIGHT_START = LocalTime.of(21, 0);
-    private static final LocalTime NIGHT_END = LocalTime.of(6, 0);
-
-    private static final Long MAX_HOURS_BY_DAY = 8L;
-
-    private static final Long FIRST_HOUR_WORKED = 1L;
 
     public static List<Surcharge> getSurchargeList(LocalDateTime start, LocalDateTime end) {
 

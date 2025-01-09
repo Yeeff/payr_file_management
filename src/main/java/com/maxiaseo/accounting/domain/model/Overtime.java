@@ -1,9 +1,6 @@
 package com.maxiaseo.accounting.domain.model;
 
-import com.maxiaseo.accounting.domain.util.OvertimeTypeEnum;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.maxiaseo.accounting.domain.util.ConstantsDomain;
 
 import java.time.LocalDateTime;
 
@@ -12,13 +9,13 @@ public class Overtime {
     private LocalDateTime start;
     private LocalDateTime end;
     private Long quantityOfHours;
-    private OvertimeTypeEnum overtimeTypeEnum;
+    private ConstantsDomain.OvertimeTypeEnum overtimeTypeEnum;
 
     public Overtime() {
         this.quantityOfHours = 0L;
     }
 
-    public Overtime(OvertimeTypeEnum overtimeType, Long quantityOfHours) {
+    public Overtime(ConstantsDomain.OvertimeTypeEnum overtimeType, Long quantityOfHours) {
         this.overtimeTypeEnum = overtimeType;
         this.quantityOfHours = quantityOfHours;
     }
@@ -40,7 +37,7 @@ public class Overtime {
         return quantityOfHours;
     }
 
-    public OvertimeTypeEnum getOvertimeTypeEnum() {
+    public ConstantsDomain.OvertimeTypeEnum getOvertimeTypeEnum() {
         return overtimeTypeEnum;
     }
 
@@ -56,7 +53,7 @@ public class Overtime {
         this.quantityOfHours = quantityOfHours;
     }
 
-    public void setOvertimeTypeEnum(OvertimeTypeEnum overtimeTypeEnum) {
+    public void setOvertimeTypeEnum(ConstantsDomain.OvertimeTypeEnum overtimeTypeEnum) {
         this.overtimeTypeEnum = overtimeTypeEnum;
     }
 }

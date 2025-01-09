@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class ControllerAdvisor {
 
     @ExceptionHandler(IncorrectFormatExcelValuesException.class)
-    public ResponseEntity<ExceptionResponseList> IncorrectFormatExcelValuesExceptionHandler(IncorrectFormatExcelValuesException ex) {
+    public ResponseEntity<ExceptionResponseList> incorrectFormatExcelValuesExceptionHandler(IncorrectFormatExcelValuesException ex) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new ExceptionResponseList(
                 ex.getMessage(), ex.getItems() , HttpStatus.UNPROCESSABLE_ENTITY.toString(), LocalDateTime.now()));
     }

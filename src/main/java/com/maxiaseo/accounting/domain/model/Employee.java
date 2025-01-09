@@ -1,8 +1,8 @@
 package com.maxiaseo.accounting.domain.model;
 
-import com.maxiaseo.accounting.domain.util.OvertimeSurchargeTypeEnum;
-import com.maxiaseo.accounting.domain.util.OvertimeTypeEnum;
-import com.maxiaseo.accounting.domain.util.SurchargeTypeEnum;
+import com.maxiaseo.accounting.domain.util.ConstantsDomain.OvertimeSurchargeTypeEnum;
+import com.maxiaseo.accounting.domain.util.ConstantsDomain.OvertimeTypeEnum;
+import com.maxiaseo.accounting.domain.util.ConstantsDomain.SurchargeTypeEnum;
 
 import java.util.ArrayList;
 import java.util.List;

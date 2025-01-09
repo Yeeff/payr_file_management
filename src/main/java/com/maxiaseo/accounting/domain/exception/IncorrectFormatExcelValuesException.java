@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class IncorrectFormatExcelValuesException extends RuntimeException{
 
-    Map<String, String> items;
+    private final Map<String, String> items;
 
     public IncorrectFormatExcelValuesException(String message, Map<String,String> items) {
         super(message);

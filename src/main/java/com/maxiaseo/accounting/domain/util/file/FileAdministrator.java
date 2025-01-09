@@ -35,6 +35,13 @@ public class FileAdministrator {
         return saveInMemory(fis);
     }
 
+    public static void deleteTempFileByName(String tempFileName){
+        String tempDir = System.getProperty("java.io.tmpdir");
+        File tempFile = new File(tempDir, tempFileName);
+        tempFile.delete();
+
+    }
+
     public static byte[] getSiigoFormat()throws IOException{
         String tempDir = System.getProperty("java.io.tmpdir");
         File tempFile = new File(tempDir, ConstantsDomain.SIIGO_FORMAT_NAME);

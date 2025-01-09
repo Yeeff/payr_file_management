@@ -7,7 +7,7 @@ public final class Constants {
 
     private Constants(){}
 
-    public final static int INDEX_TO_START_TO_WRITE_DATA = 18;
+    public static final int INDEX_TO_START_TO_WRITE_DATA = 18;
 
     public static final List<String> ORDERED_METHODS_NAMES_TO_RETRIEVE_OVERTIME_SURCHARGES = Arrays.asList(
             "getTotalSurchargeHoursNight",
