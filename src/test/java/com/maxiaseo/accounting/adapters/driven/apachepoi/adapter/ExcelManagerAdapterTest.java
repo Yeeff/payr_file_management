@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ExcelManagerAdapterTest {
 
-    /*@Test
+    @Test
     void testPopulateSiigtoFormat() throws Exception {
         int documentColumnIndex = 1;
         int newColumnIndex = 2;
@@ -98,7 +98,7 @@ class ExcelManagerAdapterTest {
         resultWorkbook.close();
     }
 
-    @Test
+    /*@Test
     public void testPopulateSiigtoFormatWithThreeEmployees() throws IOException {
         int documentColumnIndex = 1;
         int newColumnIndex = 2;

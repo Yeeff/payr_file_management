@@ -15,7 +15,7 @@ public class ConstantsDomain {
     public static final Integer LAST_DAY_OF_FIRST_FORTNIGHT = 15;
     public static final Long FIRST_HOUR_WORKED = 1L;
 
-    public static final String SIIGO_FORMAT_NAME = "Subir novedades desde Excel 1548465.xlsx";
+    public static final String SIIGO_FORMAT_NAME = "Subir novedades desde Excel.xlsx";
 
     public enum OvertimeSurchargeTypeEnum {
         HOLIDAY, NIGHT_HOLIDAY

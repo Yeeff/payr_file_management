@@ -71,6 +71,14 @@ public class PayrollServices implements IPayrollServicesPort {
 
     }
 
+    public void saveSiigoFormat(InputStream fis) throws IOException {
+
+        byte[] dataInMemory = FileAdministrator.saveInMemory(fis);
+
+        FileAdministrator.saveSiigoFormat(dataInMemory);
+
+    }
+
     public void deleteTemporaryFile(String fileName) {
         filePersistence.deleteFile(fileName);
         FileAdministrator.deleteTempFileByName (fileName);

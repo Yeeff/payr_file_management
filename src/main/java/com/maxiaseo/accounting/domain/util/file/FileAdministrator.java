@@ -3,6 +3,9 @@ package com.maxiaseo.accounting.domain.util.file;
 import com.maxiaseo.accounting.domain.util.ConstantsDomain;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class FileAdministrator {
 
@@ -51,6 +54,24 @@ public class FileAdministrator {
         fis = new FileInputStream(tempFile);
 
         return saveInMemory(fis);
+    }
+
+    public static void saveSiigoFormat(byte[] content)throws IOException{
+
+        String directoryPath = System.getProperty("java.io.tmpdir"); // System temp directory
+        Path filePath = Paths.get(directoryPath, ConstantsDomain.SIIGO_FORMAT_NAME);
+
+        try {
+            // Ensure the parent directory exists
+            Files.createDirectories(filePath.getParent());
+
+            // Write the byte[] content to the file
+            Files.write(filePath, content);
+            System.out.println("File created and written to: " + filePath.toAbsolutePath());
+        } catch (IOException e) {
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+
     }
 
     public static byte[] saveInMemory(InputStream inputStream) throws IOException {

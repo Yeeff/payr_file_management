@@ -54,6 +54,18 @@ public class PayrollController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PostMapping("/siigo-format")
+    public ResponseEntity<Void> saveSiigoFormat(
+            @RequestParam("file") MultipartFile file
+    ) throws IOException  {
+
+        payrollServices.saveSiigoFormat(
+                excelMapper.fileExcelToInputstream(file)
+                );
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
     @GetMapping()
     public ResponseEntity< List<FileResponseDto> > getSavedFiles(){
         return ResponseEntity.ok().body(fileResponseMapper.toListDto(payrollServices.getFiles()));

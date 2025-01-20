@@ -13,6 +13,8 @@ public interface IPayrollServicesPort {
 
     FileModel saveFile(InputStream fis, Integer year, Integer month, Integer day) throws IOException;
 
+    void saveSiigoFormat(InputStream fis) throws IOException;
+
     void deleteTemporaryFile(String fileName);
 
     File processSiigoFormat(String tempFileName) throws IOException;
