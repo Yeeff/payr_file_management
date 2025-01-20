@@ -30,13 +30,11 @@ public class PayrollController {
     private File tempFile; // Store reference to the temp file
 
 
-    @GetMapping("/processed-info")
+    @GetMapping("/processed-info/{fileName}")
     public ResponseEntity<List<Employee>> handleFileUpload(
-            @RequestParam("year") Integer year,
-            @RequestParam("month") Integer month,
-            @RequestParam("day") Integer day) throws IOException {
+            @PathVariable String fileName) throws IOException {
 
-        List<Employee>  result = payrollServices.handleFileUpload(tempFile.getName() ,year, month, day);
+        List<Employee>  result = payrollServices.handleFileUpload(fileName);
 
         return ResponseEntity.ok(result);
     }
@@ -67,28 +65,43 @@ public class PayrollController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @GetMapping("/download")
-    public ResponseEntity<byte[]> downloadFile() throws IOException {
-        if (tempFile != null && tempFile.exists()) {
-            byte[] fileContent = Files.readAllBytes(tempFile.toPath());
+    @GetMapping("/download/{fileName}")
+    public ResponseEntity<byte[]> downloadFile(@PathVariable String fileName) throws IOException {
 
-            // Set response headers
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.setContentDispositionFormData("attachment", tempFile.getName());
+        byte[] fileContent = payrollServices.getTempFile(fileName);
 
-            return ResponseEntity.ok()
-                    .headers(headers)
-                    .body(fileContent);
-        }
-        return ResponseEntity.notFound().build();
+        // Set response headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", fileName);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(fileContent);
     }
+
     @GetMapping("/process-siigoformat")
     public ResponseEntity<String> processSiigoFormat() throws IOException {
         File auxFile;
-        auxFile = payrollServices.processSiigoFormat(tempFile.getName(), 2024, 9, 1);
+        auxFile = payrollServices.processSiigoFormat(tempFile.getName());
         return ResponseEntity.ok(auxFile.getName());
     }
 
+    @GetMapping("/download-siigo/{fileName}")
+    public ResponseEntity<byte[]> downloadSiigoFile(@PathVariable String fileName) throws IOException {
+
+        File siigoFile = payrollServices.processSiigoFormat(fileName);
+
+        byte[] fileContent = payrollServices.getTempFile(siigoFile.getName());
+
+        // Set response headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", fileName);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(fileContent);
+    }
 
 }

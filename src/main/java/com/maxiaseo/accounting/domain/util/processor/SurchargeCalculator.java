@@ -76,7 +76,7 @@ public class SurchargeCalculator {
         surcharge.setSurchargeTypeEnum(type);
 
         if (surcharge.getStart() == null)   {
-            surcharge.setStart(cur);
+            surcharge.setStart(cur.minusHours(FIRST_HOUR_WORKED));
         }
 
         surcharge.setEnd(cur);

@@ -26,13 +26,16 @@ public class PayrollServices implements IPayrollServicesPort {
         this.filePersistence = filePersistencePort;
     }
 
-    public List<Employee> handleFileUpload( String tempFileName, Integer year, Integer month, Integer initDay) throws IOException {
+    public List<Employee> handleFileUpload( String tempFileName) throws IOException {
 
         byte[] dataInMemory = FileAdministrator.getDataInMemoryFromTempFileByName(tempFileName);
 
         List<List<String>> listOfListData = excelManagerAdapter.getDataFromExcelFileInMemory(dataInMemory);
 
-        List<Employee> employees = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay);
+        LocalDate fileSavedFortNightDate = filePersistence.getFileByName(tempFileName).getFortNightDate();
+
+        List<Employee> employees = fileDataProcessor.extractEmployeeData(listOfListData,
+                fileSavedFortNightDate.getYear(), fileSavedFortNightDate.getMonthValue(), fileSavedFortNightDate.getDayOfMonth());
 
         dataInMemory = excelManagerAdapter.updateEmployeeDataInExcel(dataInMemory, employees );
 
@@ -74,13 +77,16 @@ public class PayrollServices implements IPayrollServicesPort {
     }
 
     @Override
-    public File processSiigoFormat(String tempFileName,  Integer year, Integer month, Integer initDay) throws IOException {
+    public File processSiigoFormat(String tempFileName) throws IOException {
 
         byte[] dataInMemory = FileAdministrator.getDataInMemoryFromTempFileByName(tempFileName);
 
         List<List<String>> listOfListData = excelManagerAdapter.getDataFromExcelFileInMemory(dataInMemory);
 
-        List<Employee> employees = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay);
+        LocalDate fileSavedFortNightDate = filePersistence.getFileByName(tempFileName).getFortNightDate();
+
+        List<Employee> employees = fileDataProcessor.extractEmployeeData(listOfListData,
+                fileSavedFortNightDate.getYear(), fileSavedFortNightDate.getMonthValue(), fileSavedFortNightDate.getDayOfMonth());
 
         dataInMemory = FileAdministrator.getSiigoFormat();
 
@@ -94,6 +100,13 @@ public class PayrollServices implements IPayrollServicesPort {
     public List<FileModel> getFiles() {
         return filePersistence.getFiles();
     }
+
+    @Override
+    public byte[] getTempFile(String fileName) throws IOException {
+        return FileAdministrator.getDataInMemoryFromTempFileByName(fileName);
+    }
+
+
 
 
 }

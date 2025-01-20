@@ -5,6 +5,7 @@ import com.maxiaseo.accounting.adapters.driven.jpa.mysql.mapper.IFileEntityMappe
 import com.maxiaseo.accounting.adapters.driven.jpa.mysql.repository.FileRepository;
 import com.maxiaseo.accounting.domain.model.FileModel;
 import com.maxiaseo.accounting.domain.spi.IFilePersistencePort;
+import com.maxiaseo.accounting.adapters.driven.jpa.mysql.exception.ElementNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -32,5 +33,12 @@ public class FilePersistenceAdapterImpl implements IFilePersistencePort {
     public void deleteFile(String fileName) {
         fileRepo.deleteByName(fileName);
     }
+
+    @Override
+    public FileModel getFileByName(String name) {
+        FileEntity fileEntity = fileRepo.findByName(name).orElseThrow(ElementNotFoundException::new);
+        return fileMapper.toModel(fileEntity);
+    }
+
 
 }

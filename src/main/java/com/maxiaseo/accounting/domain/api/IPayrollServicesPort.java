@@ -9,13 +9,16 @@ import java.io.InputStream;
 import java.util.List;
 
 public interface IPayrollServicesPort {
-    List<Employee> handleFileUpload(String tempFileName, Integer year, Integer month, Integer initDay) throws IOException;
+    List<Employee> handleFileUpload(String tempFileName) throws IOException;
 
     FileModel saveFile(InputStream fis, Integer year, Integer month, Integer day) throws IOException;
 
     void deleteTemporaryFile(String fileName);
 
-    File processSiigoFormat(String tempFileName, Integer year, Integer month, Integer initDay) throws IOException;
+    File processSiigoFormat(String tempFileName) throws IOException;
 
     List<FileModel> getFiles();
+
+    byte[] getTempFile(String fileName) throws IOException;
+
 }

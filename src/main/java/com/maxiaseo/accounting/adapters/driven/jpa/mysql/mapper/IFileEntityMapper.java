@@ -11,5 +11,7 @@ public interface IFileEntityMapper {
 
     FileEntity toEntity(FileModel fileModel);
 
+    FileModel toModel(FileEntity fileEntity);
+
     List<FileModel> toFileModelList(List<FileEntity> fileEntitiesList);
 }

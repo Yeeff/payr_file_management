@@ -24,6 +24,8 @@ public class ExcelManagerAdapter implements IExelManagerPort {
 
     private final int INDEX_EMPLOYEE_DOCUMENT_ID = 1;
     private final int INDEX_EMPLOYEE_NEW = 2;
+    private final int INDEX_EMPLOYEE_NEW_QUANTITY = 4;
+
 
     Workbook workbook;
     Sheet sheet = null;
@@ -142,6 +144,8 @@ public class ExcelManagerAdapter implements IExelManagerPort {
                 Row row = sheet.createRow(rowIndex++);
                 row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID).setCellValue(employee.getId());
                 row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getSurchargeDescription(surcharge));
+                row.createCell(INDEX_EMPLOYEE_NEW_QUANTITY).setCellValue(surcharge.getQuantityOfHours() );
+
             }
 
             // Add overtime records
@@ -149,6 +153,7 @@ public class ExcelManagerAdapter implements IExelManagerPort {
                 Row row = sheet.createRow(rowIndex++);
                 row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID   ).setCellValue(employee.getId());
                 row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getOvertimeDescription(overtime));
+                row.createCell(INDEX_EMPLOYEE_NEW_QUANTITY).setCellValue(overtime.getQuantityOfHours() );
             }
 
             // Add overtime surcharge records
@@ -156,6 +161,7 @@ public class ExcelManagerAdapter implements IExelManagerPort {
                 Row row = sheet.createRow(rowIndex++);
                 row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID).setCellValue(employee.getId());
                 row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getOvertimeSurchargeDescription(overtimeSurcharge));
+                row.createCell(INDEX_EMPLOYEE_NEW_QUANTITY).setCellValue(overtimeSurcharge.getQuantityOfHours() );
             }
 
             // Add absenteeism reason records
@@ -163,6 +169,7 @@ public class ExcelManagerAdapter implements IExelManagerPort {
                 Row row = sheet.createRow(rowIndex++);
                 row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID).setCellValue(employee.getId());
                 row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getAbsenteeismReasonDescription(absenteeismReason));
+                row.createCell(INDEX_EMPLOYEE_NEW_QUANTITY).setCellValue(absenteeismReason.getQuantityOfHours() );
             }
         }
 

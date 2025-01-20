@@ -65,7 +65,7 @@ public class FileDataProcessor {
                         addSurchargeOvertimesToEmployeeBasedOnTimeRange( currentTimeRange.getStartTime(), currentTimeRange.getEndTime());
 
                         addHoursWorkedBasedOnTimeRange(currentTimeRange);
-                    } else if(!cellValue.equals(AbsenceReasonsEnum.AUS.toString())  ) {
+                    } else if(isValidAbsenceReason(cellValue) && !cellValue.equals(AbsenceReasonsEnum.AUS.toString())  ) {
                         addHoursWorkedBasedOnAbsentReason(MAX_HOURS_BY_DAY);
                         addAbsenteeismReasonToEmployee(cellValue);
                     }
@@ -298,6 +298,18 @@ public class FileDataProcessor {
             errorsMap.put(CellsValidator.getExcelRow(i), String.format(NOT_CORRESPONDING_QUANTITY_OF_DAYS_FOR_FORTNIGHT_MESSAGE_ERROR,i));
         }
 
+    }
+
+    private boolean isValidAbsenceReason(String value) {
+        if (value == null || value.isEmpty()) {
+            return false;
+        }
+        try {
+            AbsenceReasonsEnum.valueOf(value);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 
 

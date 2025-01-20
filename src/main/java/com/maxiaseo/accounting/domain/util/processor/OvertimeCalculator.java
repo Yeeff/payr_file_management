@@ -81,7 +81,7 @@ public class OvertimeCalculator {
         overtime.setOvertimeTypeEnum(type);
 
         if (overtime.getStart() == null)   {
-            overtime.setStart(cur);
+            overtime.setStart(cur.minusHours(FIRST_HOUR_WORKED));
         }
 
         overtime.setEnd(cur);

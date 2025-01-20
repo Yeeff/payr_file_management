@@ -12,4 +12,6 @@ public interface IFilePersistencePort {
     List<FileModel> getFiles();
 
     void deleteFile(String tempFileName);
+
+    FileModel getFileByName(String name);
 }

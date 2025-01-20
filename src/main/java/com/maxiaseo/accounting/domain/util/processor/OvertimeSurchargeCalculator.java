@@ -68,7 +68,7 @@ public class OvertimeSurchargeCalculator {
         overtimeSurcharge.setOvertimeSurchargeTypeEnum(type);
 
         if (overtimeSurcharge.getStart() == null)   {
-            overtimeSurcharge.setStart(cur);
+            overtimeSurcharge.setStart(cur.minusHours(FIRST_HOUR_WORKED));
         }
 
         overtimeSurcharge.setEnd(cur);
