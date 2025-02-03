@@ -31,7 +31,7 @@ class FileDataProcessorTest {
                 )
         );
 
-        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListExcelData);
+        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListExcelData, TimeFormat.REGULAR);
 
         assertEquals(6, errorsMap.size()); // Ensure 4 errors are found
 
@@ -71,7 +71,7 @@ class FileDataProcessorTest {
         );
 
 
-        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListExcelData);
+        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListExcelData, TimeFormat.REGULAR);
 
         assertEquals(5, errorsMap.size()); // Ensure 4 errors are found
 
@@ -102,12 +102,32 @@ class FileDataProcessorTest {
                 Arrays.asList("CEDULA", "NOMBRE",  "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28","29","30"),
                 Arrays.asList(
                         "15326844", "ANDRES PARRA", "7am a 4pm","7am a 4pm",
-                        "7am a 4pm","7am a 4pm","7am a 4pm","7am a 4pm","7am a 4pm","DESC",
-                        "7am a 4pm","7am a 4pm","5am a 4pm","7am a 4pm","7am a 4pm","7am a 4pm", "7am a 4pm"
+                        "7am a 4:30pm","7:30am a 4pm","7am a 4pm","7am a 4:30pm","7am a 4pm","DESC",
+                        "7am a 4pm","7am a 4pm","5:30am a 4pm","7am a 4pm","7am a 4pm","7am a 4pm", "7:30am a 4pm"
                 )
         );
 
-        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListExcelData);
+        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListExcelData, TimeFormat.REGULAR);
+        assertTrue(errorsMap.isEmpty());
+    }
+
+    @Test
+    void shouldReturnNoErrorsForValidDataWithMilitaryFormat() {
+        // Arrange
+        int year = 2023;
+        int month = 12;
+        int day = 1;
+
+        List<List<String>> listOfListExcelData = Arrays.asList(
+                Arrays.asList("CEDULA", "NOMBRE",  "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28","29","30"),
+                Arrays.asList(
+                        "15326844", "ANDRES PARRA", "7:00 a 4:00","7:00 a 4:00",
+                        "7 a 4:30","7:30 a 4:00","7:00 a 4:00","7 a 4:30","13 a 4:00","DESC",
+                        "7:00 a 4:00","7:00 a 16","5:30 a 4","7:00 a 4:30","23 a 4:00","7 a 4:00", "7:30 a 4:00"
+                )
+        );
+
+        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListExcelData, TimeFormat.MILITARY);
         assertTrue(errorsMap.isEmpty());
     }
 
@@ -127,7 +147,7 @@ class FileDataProcessorTest {
                 )
         );
 
-        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListExcelData);
+        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListExcelData, TimeFormat.REGULAR);
 
         assertEquals(1, errorsMap.size()); // Ensure 4 errors are found
 
@@ -151,7 +171,7 @@ class FileDataProcessorTest {
                 )
         );
 
-        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListExcelData);
+        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListExcelData, TimeFormat.REGULAR);
 
         assertEquals(1, errorsMap.size()); // Ensure 4 errors are found
 
@@ -184,7 +204,7 @@ class FileDataProcessorTest {
         );
 
         // Act
-        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListExcelData);
+        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListExcelData, TimeFormat.REGULAR);
 
         // Assert
         assertTrue(errorsMap.isEmpty()); // Ensure no errors are found since the blank line stops processing
@@ -198,11 +218,11 @@ class FileDataProcessorTest {
                         "15326844",
                         "NORALDO ISIDRO CARDENAS CARDENAS",
                         "DESC",//Sunday
-                        "8pm a 6am",
+                        "8pm a 6:30am",
                         "7am a 4pm",
                         "6pm a 6am",
                         "7am a 4pm",
-                        "7am a 4pm",
+                        "7am a 4:30pm",
                         "6pm a 5am",
                         "DESC",//Sunday
                         "7am a 4pm",
@@ -219,7 +239,7 @@ class FileDataProcessorTest {
         int initDay = 1;
 
         // Act
-        List<Employee> result = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay);
+        List<Employee> result = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay, TimeFormat.REGULAR);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -227,14 +247,14 @@ class FileDataProcessorTest {
         assertEquals("15326844", employee.getId().toString());
         assertEquals("NORALDO ISIDRO CARDENAS CARDENAS", employee.getName());
 
-        assertEquals(18, employee.getTotalSurchargeHoursNight());
-        assertEquals(6, employee.getTotalSurchargeHoursNightHoliday() );
-        assertEquals(8, employee.getTotalSurchargeHoursHoliday());
+        assertEquals(18.0, employee.getTotalSurchargeHoursNight());
+        assertEquals(6.0, employee.getTotalSurchargeHoursNightHoliday() );
+        assertEquals(8.0, employee.getTotalSurchargeHoursHoliday());
 
-        assertEquals(9, employee.getTotalOvertimeHoursDay());
-        assertEquals(6, employee.getTotalOvertimeHoursNight());
-        assertEquals(4, employee.getTotalOvertimeHoursHoliday());
-        assertEquals(3, employee.getTotalOvertimeHoursNightHoliday());
+        assertEquals(10.0, employee.getTotalOvertimeHoursDay());
+        assertEquals(6.0, employee.getTotalOvertimeHoursNight());
+        assertEquals(4.0, employee.getTotalOvertimeHoursHoliday());
+        assertEquals(3.0, employee.getTotalOvertimeHoursNightHoliday());
     }
 
     @Test
@@ -267,7 +287,7 @@ class FileDataProcessorTest {
         int initDay = 1;
 
         // Act
-        List<Employee> result = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay);
+        List<Employee> result = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay, TimeFormat.REGULAR);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -276,14 +296,14 @@ class FileDataProcessorTest {
         assertEquals("15326844", employee.getId().toString());
         assertEquals("ISIDRO CARDENAS", employee.getName());
 
-        assertEquals(20, employee.getTotalSurchargeHoursNight());
-        assertEquals(5, employee.getTotalSurchargeHoursNightHoliday() );
-        assertEquals(19, employee.getTotalSurchargeHoursHoliday());
+        assertEquals(20.0, employee.getTotalSurchargeHoursNight());
+        assertEquals(5.0, employee.getTotalSurchargeHoursNightHoliday() );
+        assertEquals(19.0, employee.getTotalSurchargeHoursHoliday());
 
-        assertEquals(16, employee.getTotalOvertimeHoursDay());
-        assertEquals(16, employee.getTotalOvertimeHoursNight());
-        assertEquals(8, employee.getTotalOvertimeHoursHoliday());
-        assertEquals(4, employee.getTotalOvertimeHoursNightHoliday());
+        assertEquals(16.0, employee.getTotalOvertimeHoursDay());
+        assertEquals(16.0, employee.getTotalOvertimeHoursNight());
+        assertEquals(8.0, employee.getTotalOvertimeHoursHoliday());
+        assertEquals(4.0, employee.getTotalOvertimeHoursNightHoliday());
     }
 
     @Test
@@ -315,7 +335,7 @@ class FileDataProcessorTest {
         int initDay = 1;
 
         // Act
-        List<Employee> result = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay);
+        List<Employee> result = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay, TimeFormat.REGULAR);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -326,9 +346,9 @@ class FileDataProcessorTest {
 
         assertEquals(25, employee.getTotalSurchargeHoursNight());
         assertEquals(10, employee.getTotalSurchargeHoursNightHoliday());
-        assertEquals(24, employee.getTotalSurchargeHoursHoliday());
+        assertEquals(24.0, employee.getTotalSurchargeHoursHoliday());
 
-        assertEquals(6, employee.getTotalOvertimeHoursDay());
+        assertEquals(6.0, employee.getTotalOvertimeHoursDay());
         assertEquals(0, employee.getTotalOvertimeHoursNight());
         assertEquals(9, employee.getTotalOvertimeHoursHoliday());
         assertEquals(0, employee.getTotalOvertimeHoursNightHoliday());
@@ -364,7 +384,7 @@ class FileDataProcessorTest {
         int initDay = 1;
 
         // Act
-        List<Employee> result = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay);
+        List<Employee> result = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay, TimeFormat.REGULAR);
 
         assertNotNull(result);
         assertEquals(0, result.size());
@@ -401,7 +421,7 @@ class FileDataProcessorTest {
         int initDay = 1;
 
         // Act
-        List<Employee> result = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay);
+        List<Employee> result = fileDataProcessor.extractEmployeeData(listOfListData, year, month, initDay, TimeFormat.REGULAR);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -423,6 +443,5 @@ class FileDataProcessorTest {
         assertEquals(4, employee.getTotalOvertimeSurchargeHoursNightHoliday());
 
     }
-
 
 }

@@ -5,9 +5,11 @@ import com.maxiaseo.accounting.domain.util.processor.OvertimeCalculator;
 import com.maxiaseo.accounting.domain.util.processor.OvertimeSurchargeCalculator;
 import com.maxiaseo.accounting.domain.util.processor.SurchargeCalculator;
 
+import java.sql.Time;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
@@ -37,7 +39,7 @@ public class FileDataProcessor {
         errorsMap.clear();
     }
 
-    public  List<Employee> extractEmployeeData(List<List<String>> listOfListData, Integer year, Integer month, Integer initDay){
+    public  List<Employee> extractEmployeeData(List<List<String>> listOfListData, Integer year, Integer month, Integer initDay, TimeFormat timeFormat){
 
         LocalDate initDateOfFortnight = LocalDate.of(year,month, initDay);
         LocalDate currentDate;
@@ -60,8 +62,8 @@ public class FileDataProcessor {
                 if (dataRowList.get(j) != null) {
                     String cellValue = dataRowList.get(j);
 
-                    if (CellsValidator.isValidTimeRange(cellValue) ){
-                        TimeRange currentTimeRange = getInitTimeAndEndTime(cellValue, currentDate);
+                    if (CellsValidator.isValidTimeRange(cellValue, timeFormat) ){
+                        TimeRange currentTimeRange = getInitTimeAndEndTime(cellValue, currentDate, timeFormat);
                         addSurchargeOvertimesToEmployeeBasedOnTimeRange( currentTimeRange.getStartTime(), currentTimeRange.getEndTime());
 
                         addHoursWorkedBasedOnTimeRange(currentTimeRange);
@@ -84,7 +86,7 @@ public class FileDataProcessor {
     }
 
     public  Map<String, String> getErrorsFormat(Integer year, Integer month, Integer day,
-                                                      List<List<String >> listOfListExcelData
+                                                      List<List<String >> listOfListExcelData, TimeFormat timeFormat
     ){
 
         LocalDate initDateOfFortnight = LocalDate.of(year,month, day);
@@ -113,7 +115,7 @@ public class FileDataProcessor {
                     break;
 
 
-                if (!CellsValidator.isValidTimeRange(cellValue) && !CellsValidator.isValidAbsenceReasons(cellValue)) {
+                if (!CellsValidator.isValidTimeRange(cellValue, timeFormat) && !CellsValidator.isValidAbsenceReasons(cellValue)) {
                     errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
                             String.format(INVALID_VALUE_MESSAGE_ERROR,
                                     cellValue
@@ -137,13 +139,13 @@ public class FileDataProcessor {
             addOvertimeSurchargeToEmployee(startTime, endTime);
         } else {
             for (Surcharge surcharge : SurchargeCalculator.getSurchargeList(startTime, endTime)) {
-                if (surcharge.getQuantityOfHours() != 0) {
+                if (surcharge.getQuantityOfMinutes() != 0) {
                     employee.addNewSurcharge(surcharge);
                 }
             }
 
             for (Overtime overtime : OvertimeCalculator.getOvertimeList(startTime, endTime)) {
-                if (overtime.getQuantityOfHours() != 0) {
+                if (overtime.getQuantityOfMinutes() != 0) {
                     employee.addNewOverTime(overtime);
                 }
             }
@@ -151,22 +153,38 @@ public class FileDataProcessor {
 
     }
 
-    private LocalDateTime parseTime(String timeString, LocalDate date) {
+    public static LocalDateTime parseTime(String timeString, LocalDate date, TimeFormat formatType) {
+        DateTimeFormatter formatter;
 
-        DateTimeFormatter format = new DateTimeFormatterBuilder()
-                .parseCaseInsensitive()
-                .appendPattern("ha")
-                .toFormatter(Locale.ENGLISH);
-        LocalTime time = LocalTime.parse(timeString, format);
+        if (formatType == TimeFormat.REGULAR) {
+            // Formatter for 12-hour format with am/pm
+            formatter = new DateTimeFormatterBuilder()
+                    .parseCaseInsensitive() // Ignore case (e.g., "AM" or "am")
+                    .appendPattern("[h:mma][ha]") // Handle both "7:30am" and "7am"
+                    .toFormatter(Locale.ENGLISH);
+        } else {
+            // Formatter for 24-hour format
+            formatter = new DateTimeFormatterBuilder()
+                    .appendPattern("[H:mm][H]") // Handle both "14:00" and "14"
+                    .toFormatter();
+        }
 
-        return LocalDateTime.of(date, time);
+        try {
+            // Parse the time string into LocalTime
+            LocalTime time = LocalTime.parse(timeString, formatter);
 
+            // Combine the parsed time with the provided date to create a LocalDateTime
+            return LocalDateTime.of(date, time);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid time format: " + timeString);
+        }
     }
 
-    private TimeRange getInitTimeAndEndTime( String schedule, LocalDate date){
+
+    private TimeRange getInitTimeAndEndTime( String schedule, LocalDate date, TimeFormat timeFormat){
         String[] times = schedule.split(" a");
-        LocalDateTime startTime = parseTime(times[0].trim(), date);
-        LocalDateTime endTime = parseTime(times[1].trim(), date);
+        LocalDateTime startTime = parseTime(times[0].trim(), date, timeFormat);
+        LocalDateTime endTime = parseTime(times[1].trim(), date, timeFormat);
 
         if(endTime.isBefore(startTime))
             endTime = endTime.plusDays(1);
@@ -208,7 +226,7 @@ public class FileDataProcessor {
 
     private void addOvertimeSurchargeToEmployee (LocalDateTime startTime, LocalDateTime endTime){
         for (OvertimeSurcharge overtimeSurcharge : OvertimeSurchargeCalculator.getOvertimeSurchargeList(startTime, endTime)) {
-            if (overtimeSurcharge.getQuantityOfHours() != 0) {
+            if (overtimeSurcharge.getQuantityOfMinutes() != 0) {
                 employee.addNewOverTimeSurcharge(overtimeSurcharge);
             }
         }

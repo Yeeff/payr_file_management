@@ -8,21 +8,21 @@ import java.time.LocalDateTime;
 public class Overtime {
     private LocalDateTime start;
     private LocalDateTime end;
-    private Long quantityOfHours;
+    private Long quantityOfMinutes;
     private ConstantsDomain.OvertimeTypeEnum overtimeTypeEnum;
 
     public Overtime() {
-        this.quantityOfHours = 0L;
+        this.quantityOfMinutes = 0L;
     }
 
-    public Overtime(ConstantsDomain.OvertimeTypeEnum overtimeType, Long quantityOfHours) {
+    public Overtime(ConstantsDomain.OvertimeTypeEnum overtimeType, Long quantityOfMinutes) {
         this.overtimeTypeEnum = overtimeType;
-        this.quantityOfHours = quantityOfHours;
+        this.quantityOfMinutes = quantityOfMinutes;
     }
 
 
-    public void increaseOneHour(){
-        quantityOfHours++;
+    public void increasValueOfStep(){
+        quantityOfMinutes += ConstantsDomain.STEP_IN_MINUTES;
     }
 
     public LocalDateTime getStart() {
@@ -33,8 +33,8 @@ public class Overtime {
         return end;
     }
 
-    public Long getQuantityOfHours() {
-        return quantityOfHours;
+    public Long getQuantityOfMinutes() {
+        return quantityOfMinutes;
     }
 
     public ConstantsDomain.OvertimeTypeEnum getOvertimeTypeEnum() {
@@ -49,8 +49,8 @@ public class Overtime {
         this.end = end;
     }
 
-    public void setQuantityOfHours(Long quantityOfHours) {
-        this.quantityOfHours = quantityOfHours;
+    public void setQuantityOfMinutes(Long quantityOfMinutes) {
+        this.quantityOfMinutes = quantityOfMinutes;
     }
 
     public void setOvertimeTypeEnum(ConstantsDomain.OvertimeTypeEnum overtimeTypeEnum) {

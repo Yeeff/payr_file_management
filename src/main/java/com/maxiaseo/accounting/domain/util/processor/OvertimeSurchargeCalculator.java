@@ -25,22 +25,22 @@ public class OvertimeSurchargeCalculator {
         OvertimeSurcharge overtimeSurchargeHoliday = new OvertimeSurcharge();
         OvertimeSurcharge overtimeSurchargeHolidayNight = new OvertimeSurcharge();
 
-        LocalDateTime currentTime = start.plusHours(FIRST_HOUR_WORKED );
+        LocalDateTime currentTime = start.plusMinutes(STEP_IN_MINUTES);
 
         while (currentTime.isBefore(end) || currentTime.isEqual(end)) {
 
             if (getOvertimeType(currentTime) == OvertimeSurchargeTypeEnum.HOLIDAY) {
-                overtimeSurchargeHoliday = increaseOneHourSurcharge(overtimeSurchargeHoliday, currentTime, OvertimeSurchargeTypeEnum.HOLIDAY);
+                overtimeSurchargeHoliday = increaseValueOfStepToSurcharge(overtimeSurchargeHoliday, currentTime, OvertimeSurchargeTypeEnum.HOLIDAY);
             }
             if (getOvertimeType(currentTime) == OvertimeSurchargeTypeEnum.NIGHT_HOLIDAY) {
-                overtimeSurchargeHolidayNight =increaseOneHourSurcharge(overtimeSurchargeHolidayNight, currentTime, OvertimeSurchargeTypeEnum.NIGHT_HOLIDAY);
+                overtimeSurchargeHolidayNight = increaseValueOfStepToSurcharge(overtimeSurchargeHolidayNight, currentTime, OvertimeSurchargeTypeEnum.NIGHT_HOLIDAY);
             }
 
-            currentTime = currentTime.plusHours(1);
+            currentTime = currentTime.plusMinutes(STEP_IN_MINUTES);
         }
 
-        if (overtimeSurchargeHoliday.getQuantityOfHours() != 0) overtimeSurchargeList.add(overtimeSurchargeHoliday);
-        if (overtimeSurchargeHolidayNight.getQuantityOfHours() != 0) overtimeSurchargeList.add(overtimeSurchargeHolidayNight);
+        if (overtimeSurchargeHoliday.getQuantityOfMinutes() != 0) overtimeSurchargeList.add(overtimeSurchargeHoliday);
+        if (overtimeSurchargeHolidayNight.getQuantityOfMinutes() != 0) overtimeSurchargeList.add(overtimeSurchargeHolidayNight);
 
         return overtimeSurchargeList;
     }
@@ -64,15 +64,15 @@ public class OvertimeSurchargeCalculator {
     }
 
 
-    private static OvertimeSurcharge increaseOneHourSurcharge(OvertimeSurcharge overtimeSurcharge, LocalDateTime cur, OvertimeSurchargeTypeEnum type ){
+    private static OvertimeSurcharge increaseValueOfStepToSurcharge(OvertimeSurcharge overtimeSurcharge, LocalDateTime cur, OvertimeSurchargeTypeEnum type ){
         overtimeSurcharge.setOvertimeSurchargeTypeEnum(type);
 
         if (overtimeSurcharge.getStart() == null)   {
-            overtimeSurcharge.setStart(cur.minusHours(FIRST_HOUR_WORKED));
+            overtimeSurcharge.setStart(cur.minusMinutes(STEP_IN_MINUTES));
         }
 
         overtimeSurcharge.setEnd(cur);
-        overtimeSurcharge.increaseOneHour();
+        overtimeSurcharge.increaseValueOfStep();
 
         return overtimeSurcharge;
     }

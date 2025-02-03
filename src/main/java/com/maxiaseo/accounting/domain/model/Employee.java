@@ -40,71 +40,74 @@ public class Employee {
 
 
 
-    public Long getTotalSurchargeHoursNight() {
+    public Double getTotalSurchargeHoursNight() {
         return getSumOfSurchargeHoursByType(SurchargeTypeEnum.NIGHT);
     }
 
-    public Long getTotalSurchargeHoursHoliday() {
+    public Double getTotalSurchargeHoursHoliday() {
         return getSumOfSurchargeHoursByType(SurchargeTypeEnum.HOLIDAY);
     }
 
-    public Long getTotalSurchargeHoursNightHoliday() {
+    public Double getTotalSurchargeHoursNightHoliday() {
         return getSumOfSurchargeHoursByType(SurchargeTypeEnum.NIGHT_HOLIDAY);
     }
 
 
 
-    public Long getTotalOvertimeHoursDay() {
+    public Double getTotalOvertimeHoursDay() {
         return getSumOfOvertimeHoursByType(OvertimeTypeEnum.DAY);
     }
 
-    public Long getTotalOvertimeHoursNight() {
+    public Double getTotalOvertimeHoursNight() {
         return getSumOfOvertimeHoursByType(OvertimeTypeEnum.NIGHT);
     }
 
-    public Long getTotalOvertimeHoursHoliday() {
+    public Double getTotalOvertimeHoursHoliday() {
         return getSumOfOvertimeHoursByType(OvertimeTypeEnum.HOLIDAY);
     }
 
-    public Long getTotalOvertimeHoursNightHoliday() {
+    public Double getTotalOvertimeHoursNightHoliday() {
         return getSumOfOvertimeHoursByType(OvertimeTypeEnum.NIGHT_HOLIDAY);
     }
 
 
 
 
-    public Long getTotalOvertimeSurchargeHoursNightHoliday() {
+    public Double getTotalOvertimeSurchargeHoursNightHoliday() {
         return getSumOfOvertimeSurchargeHoursByType(OvertimeSurchargeTypeEnum.NIGHT_HOLIDAY);
 
     }
-    public Long getTotalOvertimeSurchargeHoursHoliday() {
+    public Double getTotalOvertimeSurchargeHoursHoliday() {
         return getSumOfOvertimeSurchargeHoursByType(OvertimeSurchargeTypeEnum.HOLIDAY);
 
     }
 
 
 
-
-    private Long getSumOfOvertimeSurchargeHoursByType(OvertimeSurchargeTypeEnum type){
-        return overtimeSurcharges.stream()
+    private Double getSumOfOvertimeSurchargeHoursByType(OvertimeSurchargeTypeEnum type){
+        Long totalMinutes = overtimeSurcharges.stream()
                 .filter(overtimeSurcharge -> overtimeSurcharge.getOvertimeSurchargeTypeEnum() == type)
-                .mapToLong(OvertimeSurcharge::getQuantityOfHours)
+                .mapToLong(OvertimeSurcharge::getQuantityOfMinutes)
                 .sum();
+        return totalMinutes / 60.0;
     }
 
-    private Long getSumOfSurchargeHoursByType(SurchargeTypeEnum type){
-        return surcharges.stream()
+    private Double getSumOfSurchargeHoursByType(SurchargeTypeEnum type){
+        Long totalMinutes = surcharges.stream()
                 .filter(surcharge -> surcharge.getSurchargeTypeEnum() == type)
-                .mapToLong(Surcharge::getQuantityOfHours)
+                .mapToLong(Surcharge::getQuantityOfMinutes)
                 .sum();
+        return totalMinutes / 60.0;
     }
 
-    private Long getSumOfOvertimeHoursByType(OvertimeTypeEnum type){
-        return overtimes.stream()
+    private Double getSumOfOvertimeHoursByType(OvertimeTypeEnum type){
+        Long totalMinutes = overtimes.stream()
                 .filter(overtime -> overtime.getOvertimeTypeEnum() == type)
-                .mapToLong(Overtime::getQuantityOfHours)
+                .mapToLong(Overtime::getQuantityOfMinutes)
                 .sum();
+        return totalMinutes / 60.0;
     }
+
 
     public void setAbsenteeismReasons(List<AbsenteeismReason> absenteeismReasons) {
         this.absenteeismReasons = absenteeismReasons;

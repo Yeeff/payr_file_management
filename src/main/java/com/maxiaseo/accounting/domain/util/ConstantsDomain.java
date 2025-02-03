@@ -8,14 +8,21 @@ public class ConstantsDomain {
     public static final LocalTime NIGHT_START = LocalTime.of(21, 0);
     public static final LocalTime NIGHT_END = LocalTime.of(6, 0);
 
+    public static final Long STEP_IN_MINUTES = 30L;
+
     public static final Long MAX_HOURS_BY_DAY = 8L;
     public static final Long MAX_HOURS_BY_WEEK = 48L;
 
     public static final Integer FIRST_DAY_OF_MONTH = 1;
     public static final Integer LAST_DAY_OF_FIRST_FORTNIGHT = 15;
-    public static final Long FIRST_HOUR_WORKED = 1L;
+    public static final Long FIRST_THIRTY_MINUTES_WORKED = 30L;
 
     public static final String SIIGO_FORMAT_NAME = "Subir novedades desde Excel.xlsx";
+
+    public enum TimeFormat {
+        REGULAR, // 12-hour format with am/pm (e.g., "7:30am", "1:45pm")
+        MILITARY // 24-hour format (e.g., "07:30", "13:45")
+    }
 
     public enum OvertimeSurchargeTypeEnum {
         HOLIDAY, NIGHT_HOLIDAY
@@ -92,6 +99,8 @@ public class ConstantsDomain {
     public static final String LAST_VALUE_SECOND_FORTNIGHT_MESSAGE_ERROR = "El ultimo dia de %s es %s pero después de esa columana se encontro el valor: %s";
     public static final String NOT_CORRESPONDING_QUANTITY_OF_DAYS_FOR_FORTNIGHT_MESSAGE_ERROR = "La fila %s no contiene la candidad de dias correspondiente.";
     public static final String INVALID_VALUE_MESSAGE_ERROR = "'%s' no, es un valor válido.";
+
+
 
 
 }

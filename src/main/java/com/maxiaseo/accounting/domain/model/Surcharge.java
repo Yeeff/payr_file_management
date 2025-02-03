@@ -1,5 +1,6 @@
 package com.maxiaseo.accounting.domain.model;
 
+import com.maxiaseo.accounting.domain.util.ConstantsDomain;
 import com.maxiaseo.accounting.domain.util.ConstantsDomain.SurchargeTypeEnum;
 
 import java.time.LocalDateTime;
@@ -7,20 +8,20 @@ import java.time.LocalDateTime;
 public class Surcharge {
     private LocalDateTime start;
     private LocalDateTime end;
-    private Long quantityOfHours;
+    private Long quantityOfMinutes;
     private SurchargeTypeEnum surchargeTypeEnum;
 
     public Surcharge() {
-        this.quantityOfHours = 0L;
+        this.quantityOfMinutes = 0L;
     }
 
-    public Surcharge(SurchargeTypeEnum surchargeType, Long quantityOfHours) {
+    public Surcharge(SurchargeTypeEnum surchargeType, Long quantityOfMinutes) {
         this.surchargeTypeEnum = surchargeType;
-        this.quantityOfHours = quantityOfHours;
+        this.quantityOfMinutes = quantityOfMinutes;
     }
 
-    public void increaseOneHour(){
-        quantityOfHours++;
+    public void increaseValueOfStep(){
+        quantityOfMinutes += ConstantsDomain.STEP_IN_MINUTES;
     }
 
     public LocalDateTime getStart() {
@@ -31,8 +32,8 @@ public class Surcharge {
         return end;
     }
 
-    public Long getQuantityOfHours() {
-        return quantityOfHours;
+    public Long getQuantityOfMinutes() {
+        return quantityOfMinutes;
     }
 
     public SurchargeTypeEnum getSurchargeTypeEnum() {
@@ -47,8 +48,8 @@ public class Surcharge {
         this.end = end;
     }
 
-    public void setQuantityOfHours(Long quantityOfHours) {
-        this.quantityOfHours = quantityOfHours;
+    public void setQuantityOfMinutes(Long quantityOfMinutes) {
+        this.quantityOfMinutes = quantityOfMinutes;
     }
 
     public void setSurchargeTypeEnum(SurchargeTypeEnum surchargeTypeEnum) {

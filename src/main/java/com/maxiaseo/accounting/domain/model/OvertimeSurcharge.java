@@ -1,5 +1,6 @@
 package com.maxiaseo.accounting.domain.model;
 
+import com.maxiaseo.accounting.domain.util.ConstantsDomain;
 import com.maxiaseo.accounting.domain.util.ConstantsDomain.OvertimeSurchargeTypeEnum;
 
 import java.time.LocalDateTime;
@@ -7,20 +8,20 @@ import java.time.LocalDateTime;
 public class OvertimeSurcharge {
     private LocalDateTime start;
     private LocalDateTime end;
-    private Long quantityOfHours;
+    private Long quantityOfMinutes;
     private OvertimeSurchargeTypeEnum overtimeSurchargeTypeEnum;
 
     public OvertimeSurcharge() {
-        this.quantityOfHours = 0L;
+        this.quantityOfMinutes = 0L;
     }
 
-    public OvertimeSurcharge(OvertimeSurchargeTypeEnum overtimeSurchargeType, Long quantityOfHours) {
+    public OvertimeSurcharge(OvertimeSurchargeTypeEnum overtimeSurchargeType, Long quantityOfMinutes) {
         this.overtimeSurchargeTypeEnum = overtimeSurchargeType;
-        this.quantityOfHours = quantityOfHours;
+        this.quantityOfMinutes = quantityOfMinutes;
     }
 
-    public void increaseOneHour(){
-        quantityOfHours++;
+    public void increaseValueOfStep(){
+        quantityOfMinutes += ConstantsDomain.STEP_IN_MINUTES;
     }
 
     public LocalDateTime getStart() {
@@ -31,8 +32,8 @@ public class OvertimeSurcharge {
         return end;
     }
 
-    public Long getQuantityOfHours() {
-        return quantityOfHours;
+    public Long getQuantityOfMinutes() {
+        return quantityOfMinutes;
     }
 
     public OvertimeSurchargeTypeEnum getOvertimeSurchargeTypeEnum() {
@@ -47,8 +48,8 @@ public class OvertimeSurcharge {
         this.end = end;
     }
 
-    public void setQuantityOfHours(Long quantityOfHours) {
-        this.quantityOfHours = quantityOfHours;
+    public void setQuantityOfMinutes(Long quantityOfMinutes) {
+        this.quantityOfMinutes = quantityOfMinutes;
     }
 
     public void setOvertimeSurchargeTypeEnum(OvertimeSurchargeTypeEnum overtimeSurchargeTypeEnum) {

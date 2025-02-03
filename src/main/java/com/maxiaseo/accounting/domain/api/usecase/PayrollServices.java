@@ -6,6 +6,7 @@ import com.maxiaseo.accounting.domain.model.Employee;
 import com.maxiaseo.accounting.domain.model.FileModel;
 import com.maxiaseo.accounting.domain.spi.IExelManagerPort;
 import com.maxiaseo.accounting.domain.spi.IFilePersistencePort;
+import com.maxiaseo.accounting.domain.util.ConstantsDomain;
 import com.maxiaseo.accounting.domain.util.file.FileAdministrator;
 import com.maxiaseo.accounting.domain.util.file.FileDataProcessor;
 
@@ -35,7 +36,8 @@ public class PayrollServices implements IPayrollServicesPort {
         LocalDate fileSavedFortNightDate = filePersistence.getFileByName(tempFileName).getFortNightDate();
 
         List<Employee> employees = fileDataProcessor.extractEmployeeData(listOfListData,
-                fileSavedFortNightDate.getYear(), fileSavedFortNightDate.getMonthValue(), fileSavedFortNightDate.getDayOfMonth());
+                fileSavedFortNightDate.getYear(), fileSavedFortNightDate.getMonthValue(), fileSavedFortNightDate.getDayOfMonth(),
+                ConstantsDomain.TimeFormat.MILITARY);
 
         dataInMemory = excelManagerAdapter.updateEmployeeDataInExcel(dataInMemory, employees );
 
@@ -52,7 +54,7 @@ public class PayrollServices implements IPayrollServicesPort {
 
         fileDataProcessor.resetErrorsMap();
 
-        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListData);
+        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListData, ConstantsDomain.TimeFormat.MILITARY);
 
         if( ! errorsMap.isEmpty()) {
             throw new IncorrectFormatExcelValuesException("", errorsMap );
@@ -94,7 +96,8 @@ public class PayrollServices implements IPayrollServicesPort {
         LocalDate fileSavedFortNightDate = filePersistence.getFileByName(tempFileName).getFortNightDate();
 
         List<Employee> employees = fileDataProcessor.extractEmployeeData(listOfListData,
-                fileSavedFortNightDate.getYear(), fileSavedFortNightDate.getMonthValue(), fileSavedFortNightDate.getDayOfMonth());
+                fileSavedFortNightDate.getYear(), fileSavedFortNightDate.getMonthValue(), fileSavedFortNightDate.getDayOfMonth(),
+                ConstantsDomain.TimeFormat.MILITARY);
 
         dataInMemory = FileAdministrator.getSiigoFormat();
 

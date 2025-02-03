@@ -26,30 +26,30 @@ public class OvertimeCalculator {
         Overtime overtimeHoliday =  new Overtime();
         Overtime overtimeHolidayNight =  new Overtime();
 
-        LocalDateTime currentTime = start.plusHours(FIRST_HOUR_WORKED + MAX_HOURS_BY_DAY );
+        LocalDateTime currentTime = start.plusMinutes(STEP_IN_MINUTES + 480 );
 
         while (currentTime.isBefore(end) || currentTime.isEqual(end)) {
 
             if (getOvertimeType(currentTime) == OvertimeTypeEnum.DAY) {
-                overtimeDay =increaseOneHourSurcharge(overtimeDay, currentTime, OvertimeTypeEnum.DAY);
+                overtimeDay = increaseValueOfStepToOvertime(overtimeDay, currentTime, OvertimeTypeEnum.DAY);
             }
             if (getOvertimeType(currentTime) == OvertimeTypeEnum.NIGHT) {
-                overtimeNight =increaseOneHourSurcharge(overtimeNight, currentTime, OvertimeTypeEnum.NIGHT);
+                overtimeNight = increaseValueOfStepToOvertime(overtimeNight, currentTime, OvertimeTypeEnum.NIGHT);
             }
             if (getOvertimeType(currentTime) == OvertimeTypeEnum.HOLIDAY) {
-                overtimeHoliday =increaseOneHourSurcharge(overtimeHoliday, currentTime, OvertimeTypeEnum.HOLIDAY);
+                overtimeHoliday = increaseValueOfStepToOvertime(overtimeHoliday, currentTime, OvertimeTypeEnum.HOLIDAY);
             }
             if (getOvertimeType(currentTime) == OvertimeTypeEnum.NIGHT_HOLIDAY) {
-                overtimeHolidayNight =increaseOneHourSurcharge(overtimeHolidayNight, currentTime, OvertimeTypeEnum.NIGHT_HOLIDAY);
+                overtimeHolidayNight = increaseValueOfStepToOvertime(overtimeHolidayNight, currentTime, OvertimeTypeEnum.NIGHT_HOLIDAY);
             }
 
-            currentTime = currentTime.plusHours(1);
+            currentTime = currentTime.plusMinutes(STEP_IN_MINUTES);
         }
 
-        if (overtimeDay.getQuantityOfHours() != 0) overtimeList.add(overtimeDay);
-        if (overtimeNight.getQuantityOfHours() != 0) overtimeList.add(overtimeNight);
-        if (overtimeHoliday.getQuantityOfHours() != 0) overtimeList.add(overtimeHoliday);
-        if (overtimeHolidayNight.getQuantityOfHours() != 0) overtimeList.add(overtimeHolidayNight);
+        if (overtimeDay.getQuantityOfMinutes() != 0) overtimeList.add(overtimeDay);
+        if (overtimeNight.getQuantityOfMinutes() != 0) overtimeList.add(overtimeNight);
+        if (overtimeHoliday.getQuantityOfMinutes() != 0) overtimeList.add(overtimeHoliday);
+        if (overtimeHolidayNight.getQuantityOfMinutes() != 0) overtimeList.add(overtimeHolidayNight);
 
         return overtimeList;
     }
@@ -71,21 +71,21 @@ public class OvertimeCalculator {
             return OvertimeTypeEnum.HOLIDAY;
         } else if (isNightSurcharge) {
             return OvertimeTypeEnum.NIGHT;
-        } else {
+        } else {    
             return OvertimeTypeEnum.DAY;
         }
     }
 
 
-    private static Overtime increaseOneHourSurcharge(Overtime overtime, LocalDateTime cur, OvertimeTypeEnum type ){
+    private static Overtime increaseValueOfStepToOvertime(Overtime overtime, LocalDateTime cur, OvertimeTypeEnum type ){
         overtime.setOvertimeTypeEnum(type);
 
         if (overtime.getStart() == null)   {
-            overtime.setStart(cur.minusHours(FIRST_HOUR_WORKED));
+            overtime.setStart(cur.minusMinutes(STEP_IN_MINUTES));
         }
 
         overtime.setEnd(cur);
-        overtime.increaseOneHour();
+        overtime.increasValueOfStep();
 
         return overtime;
     }

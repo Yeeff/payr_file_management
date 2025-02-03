@@ -27,7 +27,25 @@ class SurchargeCalculatorTest {
         assertEquals(1, result.size());
 
         assertEquals(SurchargeTypeEnum.NIGHT, nightSurcharge.getSurchargeTypeEnum());
-        assertEquals(5L, nightSurcharge.getQuantityOfHours());
+        assertEquals(300L, nightSurcharge.getQuantityOfMinutes());
+    }
+
+    @Test
+    public void testNightSurchargeWithOrdinaryWaysBeforeHalfHours() {
+        LocalDateTime start = LocalDateTime.of(2024, 9, 20, 18, 0);
+        LocalDateTime end = LocalDateTime.of(2024, 9, 21, 1, 30);
+
+        List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end);
+
+        Surcharge nightSurcharge = result.stream()
+                .filter(s -> s.getSurchargeTypeEnum() == SurchargeTypeEnum.NIGHT)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Night surcharge not found"));
+
+        assertEquals(1, result.size());
+
+        assertEquals(SurchargeTypeEnum.NIGHT, nightSurcharge.getSurchargeTypeEnum());
+        assertEquals(270L, nightSurcharge.getQuantityOfMinutes());
     }
 
     @Test
@@ -45,7 +63,7 @@ class SurchargeCalculatorTest {
         assertEquals(1, result.size());
 
         assertEquals(SurchargeTypeEnum.NIGHT, nightSurcharge.getSurchargeTypeEnum());
-        assertEquals(4L, nightSurcharge.getQuantityOfHours());
+        assertEquals(240L, nightSurcharge.getQuantityOfMinutes());
     }
 
     @Test
@@ -63,7 +81,7 @@ class SurchargeCalculatorTest {
         assertEquals(2, result.size());
 
         assertEquals(SurchargeTypeEnum.HOLIDAY, holidaySurcharge.getSurchargeTypeEnum());
-        assertEquals(4L, holidaySurcharge.getQuantityOfHours());  // 8 hours of holiday overtime
+        assertEquals(240L, holidaySurcharge.getQuantityOfMinutes());  // 8 hours of holiday overtime
     }
 
     @Test
@@ -81,13 +99,13 @@ class SurchargeCalculatorTest {
         assertEquals(2, result.size());
 
         assertEquals(SurchargeTypeEnum.HOLIDAY, holidaySurcharge.getSurchargeTypeEnum());
-        assertEquals(5L, holidaySurcharge.getQuantityOfHours());  // 8 hours of holiday overtime
+        assertEquals(300L, holidaySurcharge.getQuantityOfMinutes());  // 8 hours of holiday overtime
     }
 
     @Test
     public void testNightHolidaySurchargeWithOtherTypeOfDaysBefore() {
-        LocalDateTime start = LocalDateTime.of(2024, 9, 22, 18, 0);  // Monday holiday, 9 PM
-        LocalDateTime end = LocalDateTime.of(2024, 9, 22, 23, 0);     // 5 AM next day
+        LocalDateTime start = LocalDateTime.of(2024, 9, 22, 18, 0);
+        LocalDateTime end = LocalDateTime.of(2024, 9, 22, 23, 0);
 
         List<Surcharge> result = SurchargeCalculator.getSurchargeList(start, end);
 
@@ -99,7 +117,7 @@ class SurchargeCalculatorTest {
         assertEquals(2, result.size());
 
         assertEquals(SurchargeTypeEnum.NIGHT_HOLIDAY, nightHolidaySurcharge.getSurchargeTypeEnum());
-        assertEquals(2L, nightHolidaySurcharge.getQuantityOfHours());  // 8 hours of night holiday overtime
+        assertEquals(120L, nightHolidaySurcharge.getQuantityOfMinutes());  // 8 hours of night holiday overtime
     }
 
     @Test
@@ -117,7 +135,7 @@ class SurchargeCalculatorTest {
         assertEquals(2, result.size());
 
         assertEquals(SurchargeTypeEnum.NIGHT_HOLIDAY, nightHolidaySurcharge.getSurchargeTypeEnum());
-        assertEquals(3L, nightHolidaySurcharge.getQuantityOfHours());  // 8 hours of night holiday overtime
+        assertEquals(180L, nightHolidaySurcharge.getQuantityOfMinutes());  // 8 hours of night holiday overtime
     }
 
     @Test
@@ -142,21 +160,21 @@ class SurchargeCalculatorTest {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Night-Holiday surcharge not found"));
 
-        Long nightQuantityHours = nightSurcharge.getQuantityOfHours();
-        Long holidayQuantityHours = holidaySurcharge.getQuantityOfHours();
-        Long nightHolidayQuantityHours = nightHolidaySurcharge.getQuantityOfHours();
+        Long nightQuantityHours = nightSurcharge.getQuantityOfMinutes();
+        Long holidayQuantityHours = holidaySurcharge.getQuantityOfMinutes();
+        Long nightHolidayQuantityHours = nightHolidaySurcharge.getQuantityOfMinutes();
 
         // Verify Night Surcharge
         assertEquals(SurchargeTypeEnum.NIGHT, nightSurcharge.getSurchargeTypeEnum());
-        assertEquals(2L, nightQuantityHours);  // 2 hours (Sunday night)
+        assertEquals(120L, nightQuantityHours);  // 2 hours (Sunday night)
 
         // Verify Holiday Surcharge
         assertEquals(SurchargeTypeEnum.HOLIDAY, holidaySurcharge.getSurchargeTypeEnum());
-        assertEquals(3L, holidayQuantityHours);  // 10 hours (Monday day)
+        assertEquals(180L, holidayQuantityHours);  // 10 hours (Monday day)
 
         // Verify Night-Holiday Surcharge
         assertEquals(SurchargeTypeEnum.NIGHT_HOLIDAY, nightHolidaySurcharge.getSurchargeTypeEnum());
-        assertEquals(3L, nightHolidayQuantityHours);  // 2 hours (Monday night)
+        assertEquals(180L, nightHolidayQuantityHours);  // 2 hours (Monday night)
 
     }
 
@@ -182,18 +200,18 @@ class SurchargeCalculatorTest {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Night-Holiday surcharge not found"));
 
-        Long nightQuantityHours = nightSurcharge.getQuantityOfHours();
-        Long holidayQuantityHours = holidaySurcharge.getQuantityOfHours();
-        Long nightHolidayQuantityHours = nightHolidaySurcharge.getQuantityOfHours();
+        Long nightQuantityHours = nightSurcharge.getQuantityOfMinutes();
+        Long holidayQuantityHours = holidaySurcharge.getQuantityOfMinutes();
+        Long nightHolidayQuantityHours = nightHolidaySurcharge.getQuantityOfMinutes();
 
         assertEquals(SurchargeTypeEnum.NIGHT, nightSurcharge.getSurchargeTypeEnum());
-        assertEquals(4L, nightQuantityHours);  // 2 hours (Sunday night)
+        assertEquals(240L, nightQuantityHours);  // 2 hours (Sunday night)
 
         assertEquals(SurchargeTypeEnum.HOLIDAY, holidaySurcharge.getSurchargeTypeEnum());
-        assertEquals(1L, holidayQuantityHours);  // 10 hours (Monday day)
+        assertEquals(60L, holidayQuantityHours);  // 10 hours (Monday day)
 
         assertEquals(SurchargeTypeEnum.NIGHT_HOLIDAY, nightHolidaySurcharge.getSurchargeTypeEnum());
-        assertEquals(3L, nightHolidayQuantityHours);  // 2 hours (Monday night)
+        assertEquals(180L, nightHolidayQuantityHours);  // 2 hours (Monday night)
 
     }
 
@@ -212,7 +230,7 @@ class SurchargeCalculatorTest {
         assertEquals(1, result.size());
 
         assertEquals(SurchargeTypeEnum.NIGHT, nightSurcharge.getSurchargeTypeEnum());
-        assertEquals(5L, nightSurcharge.getQuantityOfHours());
+        assertEquals(300L, nightSurcharge.getQuantityOfMinutes());
     }
 
     @Test
@@ -230,7 +248,7 @@ class SurchargeCalculatorTest {
         assertEquals(2, result.size());
 
         assertEquals(SurchargeTypeEnum.HOLIDAY, holidaySurcharge.getSurchargeTypeEnum());
-        assertEquals(6L, holidaySurcharge.getQuantityOfHours());  // 8 hours of holiday overtime
+        assertEquals(360L, holidaySurcharge.getQuantityOfMinutes());  // 8 hours of holiday overtime
     }
 
 

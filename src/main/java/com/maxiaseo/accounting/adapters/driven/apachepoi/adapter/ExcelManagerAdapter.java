@@ -144,7 +144,7 @@ public class ExcelManagerAdapter implements IExelManagerPort {
                 Row row = sheet.createRow(rowIndex++);
                 row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID).setCellValue(employee.getId());
                 row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getSurchargeDescription(surcharge));
-                row.createCell(INDEX_EMPLOYEE_NEW_QUANTITY).setCellValue(surcharge.getQuantityOfHours() );
+                row.createCell(INDEX_EMPLOYEE_NEW_QUANTITY).setCellValue(surcharge.getQuantityOfMinutes() );
 
             }
 
@@ -153,7 +153,7 @@ public class ExcelManagerAdapter implements IExelManagerPort {
                 Row row = sheet.createRow(rowIndex++);
                 row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID   ).setCellValue(employee.getId());
                 row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getOvertimeDescription(overtime));
-                row.createCell(INDEX_EMPLOYEE_NEW_QUANTITY).setCellValue(overtime.getQuantityOfHours() );
+                row.createCell(INDEX_EMPLOYEE_NEW_QUANTITY).setCellValue(overtime.getQuantityOfMinutes() );
             }
 
             // Add overtime surcharge records
@@ -161,7 +161,7 @@ public class ExcelManagerAdapter implements IExelManagerPort {
                 Row row = sheet.createRow(rowIndex++);
                 row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID).setCellValue(employee.getId());
                 row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getOvertimeSurchargeDescription(overtimeSurcharge));
-                row.createCell(INDEX_EMPLOYEE_NEW_QUANTITY).setCellValue(overtimeSurcharge.getQuantityOfHours() );
+                row.createCell(INDEX_EMPLOYEE_NEW_QUANTITY).setCellValue(overtimeSurcharge.getQuantityOfMinutes() );
             }
 
             // Add absenteeism reason records
