@@ -1,11 +1,12 @@
-package com.maxiaseo.accounting.domain.util.file;
+package com.maxiaseo.accounting.domain.service.file;
 
 import com.maxiaseo.accounting.domain.model.*;
-import com.maxiaseo.accounting.domain.util.processor.OvertimeCalculator;
-import com.maxiaseo.accounting.domain.util.processor.OvertimeSurchargeCalculator;
-import com.maxiaseo.accounting.domain.util.processor.SurchargeCalculator;
+import com.maxiaseo.accounting.domain.service.Maxiaseo;
+import com.maxiaseo.accounting.domain.service.processor.SurchargeCalculator;
+import com.maxiaseo.accounting.domain.util.TimeRange;
+import com.maxiaseo.accounting.domain.service.processor.OvertimeCalculator;
+import com.maxiaseo.accounting.domain.service.processor.OvertimeSurchargeCalculator;
 
-import java.sql.Time;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -182,6 +183,9 @@ public class FileDataProcessor {
 
 
     private TimeRange getInitTimeAndEndTime( String schedule, LocalDate date, TimeFormat timeFormat){
+
+        Maxiaseo maxi = new Maxiaseo();
+
         String[] times = schedule.split(" a");
         LocalDateTime startTime = parseTime(times[0].trim(), date, timeFormat);
         LocalDateTime endTime = parseTime(times[1].trim(), date, timeFormat);
@@ -189,7 +193,9 @@ public class FileDataProcessor {
         if(endTime.isBefore(startTime))
             endTime = endTime.plusDays(1);
 
-        return new TimeRange(startTime, endTime);
+        TimeRange timeRange = new TimeRange(startTime, endTime);
+
+        return maxi.validateLunchHour(timeRange) ;
     }
 
     private void addHoursWorkedBasedOnTimeRange(TimeRange currentTimeRange){
@@ -331,21 +337,5 @@ public class FileDataProcessor {
     }
 
 
-    class TimeRange {
-        private final LocalDateTime startTime;
-        private final LocalDateTime endTime;
 
-        public TimeRange(LocalDateTime startTime, LocalDateTime endTime) {
-            this.startTime = startTime;
-            this.endTime = endTime;
-        }
-
-        public LocalDateTime getStartTime() {
-            return startTime;
-        }
-
-        public LocalDateTime getEndTime() {
-            return endTime;
-        }
-    }
 }

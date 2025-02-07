@@ -8,7 +8,7 @@ import com.maxiaseo.accounting.domain.api.IPayrollServicesPort;
 import com.maxiaseo.accounting.domain.api.usecase.PayrollServices;
 import com.maxiaseo.accounting.domain.spi.IExelManagerPort;
 import com.maxiaseo.accounting.domain.spi.IFilePersistencePort;
-import com.maxiaseo.accounting.domain.util.file.FileDataProcessor;
+import com.maxiaseo.accounting.domain.service.file.FileDataProcessor;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

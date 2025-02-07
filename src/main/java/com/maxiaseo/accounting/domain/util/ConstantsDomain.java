@@ -48,7 +48,11 @@ public class ConstantsDomain {
         AUS,            //AUSENTISMO,
         EPS,            //COLABORADOR_EN_EPS,
         RET,            //RETIRO
-        DESC            //DESCANSO
+        DESC,            //DESCANSO
+        INC_FONDO,
+        VAC,
+        LM,
+        X
     }
     public static final Set<String> VALID_CODES = Set.of(
             AbsenceReasonsEnum.INC_ARL.toString(),
@@ -59,7 +63,11 @@ public class ConstantsDomain {
             AbsenceReasonsEnum.AUS.toString(),
             AbsenceReasonsEnum.EPS.toString(),
             AbsenceReasonsEnum.RET.toString(),
-            AbsenceReasonsEnum.DESC.toString()
+            AbsenceReasonsEnum.DESC.toString(),
+            AbsenceReasonsEnum.INC_FONDO.toString(),
+            AbsenceReasonsEnum.VAC.toString(),
+            AbsenceReasonsEnum.LM.toString(),
+            AbsenceReasonsEnum.X.toString()
             );
 
     public static final Integer FIRST_DAY_OF_FIRST_FORTNIGHT = 1;

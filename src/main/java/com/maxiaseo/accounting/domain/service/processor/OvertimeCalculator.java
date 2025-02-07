@@ -1,4 +1,4 @@
-package com.maxiaseo.accounting.domain.util.processor;
+package com.maxiaseo.accounting.domain.service.processor;
 
 import com.maxiaseo.accounting.domain.model.Overtime;
 import com.maxiaseo.accounting.domain.util.ConstantsDomain.OvertimeTypeEnum;

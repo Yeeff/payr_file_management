@@ -2,7 +2,7 @@ package com.maxiaseo.accounting.domain.util;
 
 import com.maxiaseo.accounting.domain.model.Surcharge;
 import com.maxiaseo.accounting.domain.util.ConstantsDomain.SurchargeTypeEnum;
-import com.maxiaseo.accounting.domain.util.processor.SurchargeCalculator;
+import com.maxiaseo.accounting.domain.service.processor.SurchargeCalculator;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
