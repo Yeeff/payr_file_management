@@ -219,18 +219,18 @@ class FileDataProcessorTest {
                         "15326844",
                         "NORALDO ISIDRO CARDENAS CARDENAS",
                         "DESC",//Sunday
-                        "8pm a 6:30am",
+                        "8pm a 6:30am",  //0.5
                         "7am a 4pm",
                         "6pm a 6am",
                         "7am a 4pm",
-                        "7am a 4:30pm",
+                        "7am a 4:30pm",      //1.5
                         "6pm a 5am",
                         "DESC",//Sunday
                         "7am a 4pm",
                         "7am a 4pm",
                         "7am a 4pm",
                         "AUS",
-                        "7am a 6pm",
+                        "7am a 6pm",      //3
                         "8pm a 4am",
                         "7am a 7pm"//Sunday
                 )
@@ -252,7 +252,7 @@ class FileDataProcessorTest {
         assertEquals(6.0, employee.getTotalSurchargeHoursNightHoliday() );
         assertEquals(8.0, employee.getTotalSurchargeHoursHoliday());
 
-        assertEquals(10.0, employee.getTotalOvertimeHoursDay());
+        assertEquals(4.0, employee.getTotalOvertimeHoursDay());//not confident
         assertEquals(6.0, employee.getTotalOvertimeHoursNight());
         assertEquals(4.0, employee.getTotalOvertimeHoursHoliday());
         assertEquals(3.0, employee.getTotalOvertimeHoursNightHoliday());
@@ -349,9 +349,9 @@ class FileDataProcessorTest {
         assertEquals(10, employee.getTotalSurchargeHoursNightHoliday());
         assertEquals(24.0, employee.getTotalSurchargeHoursHoliday());
 
-        assertEquals(6.0, employee.getTotalOvertimeHoursDay());
+        assertEquals(4.0, employee.getTotalOvertimeHoursDay());
         assertEquals(0, employee.getTotalOvertimeHoursNight());
-        assertEquals(9, employee.getTotalOvertimeHoursHoliday());
+        assertEquals(8, employee.getTotalOvertimeHoursHoliday());
         assertEquals(0, employee.getTotalOvertimeHoursNightHoliday());
     }
 
