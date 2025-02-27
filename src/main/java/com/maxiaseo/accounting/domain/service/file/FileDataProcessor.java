@@ -159,6 +159,7 @@ public class FileDataProcessor {
 
         formatter = switch (formatType){
             case REGULAR -> new DateTimeFormatterBuilder()
+                    .parseCaseInsensitive()
                     .appendPattern("[h:mma][ha]")
                     .toFormatter(Locale.ENGLISH);
 
