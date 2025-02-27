@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SurchargeCalculatorTest {
 
     @Test
-    public void testNightSurchargeWithOrdinaryWaysBefore() {
+    void testNightSurchargeWithOrdinaryWaysBefore() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 20, 18, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 21, 2, 0);
 
@@ -31,7 +31,7 @@ class SurchargeCalculatorTest {
     }
 
     @Test
-    public void testNightSurchargeWithOrdinaryWaysBeforeHalfHours() {
+    void testNightSurchargeWithOrdinaryWaysBeforeHalfHours() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 20, 18, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 21, 1, 30);
 
@@ -49,7 +49,7 @@ class SurchargeCalculatorTest {
     }
 
     @Test
-    public void testNightSurchargeWithOrdinaryWaysAfter() {
+    void testNightSurchargeWithOrdinaryWaysAfter() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 20, 2, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 20, 9, 0);
 
@@ -67,7 +67,7 @@ class SurchargeCalculatorTest {
     }
 
     @Test
-    public void testHolidaySurchargeWithOrdinaryWaysBefore() {
+    void testHolidaySurchargeWithOrdinaryWaysBefore() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 22, 4, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 22, 10, 0);
 
@@ -85,7 +85,7 @@ class SurchargeCalculatorTest {
     }
 
     @Test
-    public void testHolidaySurchargeWithOrdinaryWaysAfter() {
+    void testHolidaySurchargeWithOrdinaryWaysAfter() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 22, 16, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 22, 23, 0);
 
@@ -103,7 +103,7 @@ class SurchargeCalculatorTest {
     }
 
     @Test
-    public void testNightHolidaySurchargeWithOtherTypeOfDaysBefore() {
+    void testNightHolidaySurchargeWithOtherTypeOfDaysBefore() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 22, 18, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 22, 23, 0);
 
@@ -121,7 +121,7 @@ class SurchargeCalculatorTest {
     }
 
     @Test
-    public void testNightHolidaySurchargeWithOtherTypeOfDaysAfter() {
+    void testNightHolidaySurchargeWithOtherTypeOfDaysAfter() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 22, 3, 0);  // Monday holiday, 9 PM
         LocalDateTime end = LocalDateTime.of(2024, 9, 22, 10, 0);     // 5 AM next day
 
@@ -139,7 +139,7 @@ class SurchargeCalculatorTest {
     }
 
     @Test
-    public void testMixedSurcharges() {
+    void testMixedSurcharges() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 15, 18, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 16, 2, 0);
 
@@ -179,7 +179,7 @@ class SurchargeCalculatorTest {
     }
 
     @Test
-    public void testMixedSurcharges2() {
+    void testMixedSurcharges2() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 15, 20, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 16, 4, 0);
 
@@ -216,7 +216,7 @@ class SurchargeCalculatorTest {
     }
 
     @Test
-    public void testNightSurchargeBeingMaxHours() {
+    void testNightSurchargeBeingMaxHours() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 20, 18, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 21, 16, 0);
 
@@ -234,7 +234,7 @@ class SurchargeCalculatorTest {
     }
 
     @Test
-    public void testHolidaySurchargeBeingMaxHours() {
+    void testHolidaySurchargeBeingMaxHours() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 22, 4, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 22, 23, 0);
 

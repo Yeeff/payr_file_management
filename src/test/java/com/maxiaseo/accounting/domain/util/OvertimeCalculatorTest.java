@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class OvertimeCalculatorTest {
 
     @Test
-    public void testOneDayOvertime() {
+    void testOneDayOvertime() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 20, 7, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 20, 16, 0);
 
@@ -31,7 +31,7 @@ class OvertimeCalculatorTest {
     }
 
     @Test
-    public void testOneDayOvertimeHalfHour() {
+    void testOneDayOvertimeHalfHour() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 20, 7, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 20, 16, 30);
 
@@ -49,7 +49,7 @@ class OvertimeCalculatorTest {
     }
 
     @Test
-    public void testMOreThanOneDayOvertime() {
+    void testMOreThanOneDayOvertime() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 20, 7, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 20, 18, 0);
 
@@ -67,7 +67,7 @@ class OvertimeCalculatorTest {
     }
 
     @Test
-    public void testOneNightOverTime() {
+    void testOneNightOverTime() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 19, 14, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 19, 23, 0);
 
@@ -85,7 +85,7 @@ class OvertimeCalculatorTest {
     }
 
     @Test
-    public void testMoreThanOneNightOverTime() {
+    void testMoreThanOneNightOverTime() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 19, 14, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 20, 2, 0);
 
@@ -103,7 +103,7 @@ class OvertimeCalculatorTest {
     }
 
     @Test
-    public void testOneHolidayOverTime() {
+    void testOneHolidayOverTime() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 22, 8, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 22, 17, 0);
 
@@ -121,7 +121,7 @@ class OvertimeCalculatorTest {
     }
 
     @Test
-    public void testMoreThanOneHolidayOverTime() {
+    void testMoreThanOneHolidayOverTime() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 22, 8, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 22, 19, 0);
 
@@ -139,7 +139,7 @@ class OvertimeCalculatorTest {
     }
 
     @Test
-    public void testOneHolidayNightOverTime() {
+    void testOneHolidayNightOverTime() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 21, 18, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 22, 3, 0);
 
@@ -157,7 +157,7 @@ class OvertimeCalculatorTest {
     }
 
     @Test
-    public void testMoreThanOneHolidayNightOverTime() {
+    void testMoreThanOneHolidayNightOverTime() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 21, 18, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 22, 5, 0);
 
@@ -175,7 +175,7 @@ class OvertimeCalculatorTest {
     }
 
     @Test
-    public void testMixedOvertime() {
+    void testMixedOvertime() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 21, 8, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 22, 23, 0);
 
@@ -222,7 +222,7 @@ class OvertimeCalculatorTest {
     }
 
     @Test
-    public void testMixedOvertime2() {
+    void testMixedOvertime2() {
         LocalDateTime start = LocalDateTime.of(2024, 9, 21, 6, 0);
         LocalDateTime end = LocalDateTime.of(2024, 9, 22, 22, 0);
 

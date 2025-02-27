@@ -37,7 +37,7 @@ public class PayrollServices implements IPayrollServicesPort {
 
         List<Employee> employees = fileDataProcessor.extractEmployeeData(listOfListData,
                 fileSavedFortNightDate.getYear(), fileSavedFortNightDate.getMonthValue(), fileSavedFortNightDate.getDayOfMonth(),
-                ConstantsDomain.TimeFormat.MILITARY);
+                ConstantsDomain.TimeFormat.MILITARY_WITHOUT_COLON);
 
         dataInMemory = excelManagerAdapter.updateEmployeeDataInExcel(dataInMemory, employees );
 
@@ -54,7 +54,7 @@ public class PayrollServices implements IPayrollServicesPort {
 
         fileDataProcessor.resetErrorsMap();
 
-        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListData, ConstantsDomain.TimeFormat.MILITARY);
+        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListData, ConstantsDomain.TimeFormat.MILITARY_WITHOUT_COLON);
 
         if( ! errorsMap.isEmpty()) {
             throw new IncorrectFormatExcelValuesException("", errorsMap );
