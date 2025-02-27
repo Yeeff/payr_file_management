@@ -71,9 +71,9 @@ public class ExcelManagerAdapter implements IExelManagerPort {
                         Method method = Employee.class.getMethod(methodName);
                         Object result = method.invoke(employee);
 
-                        if (result instanceof Long) {
+                        if (result instanceof Double ) {
                             Cell cell = row.createCell(colIndex++, CellType.NUMERIC);
-                            cell.setCellValue((Long) result);
+                            cell.setCellValue((Double) result);
                         }
                     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace(); // Handle exceptions appropriately

@@ -40,7 +40,7 @@ public class FileDataProcessor {
         errorsMap.clear();
     }
 
-    public  List<Employee> extractEmployeeData(List<List<String>> listOfListData, Integer year, Integer month, Integer initDay, TimeFormat timeFormat){
+    public  List<Employee> extractEmployeeData(List<List<String>> listOfListData, Integer year, Integer month, Integer initDay, TimeFormat timeFormatType){
 
         LocalDate initDateOfFortnight = LocalDate.of(year,month, initDay);
         LocalDate currentDate;
@@ -63,8 +63,8 @@ public class FileDataProcessor {
                 if (dataRowList.get(j) != null) {
                     String cellValue = dataRowList.get(j);
 
-                    if (CellsValidator.isValidTimeRange(cellValue, timeFormat) ){
-                        TimeRange currentTimeRange = getInitTimeAndEndTime(cellValue, currentDate, timeFormat);
+                    if (CellsValidator.isValidTimeRange(cellValue, timeFormatType) ){
+                        TimeRange currentTimeRange = getInitTimeAndEndTime(cellValue, currentDate, timeFormatType);
                         addSurchargeOvertimesToEmployeeBasedOnTimeRange( currentTimeRange.getStartTime(), currentTimeRange.getEndTime());
 
                         addHoursWorkedBasedOnTimeRange(currentTimeRange);
@@ -87,7 +87,7 @@ public class FileDataProcessor {
     }
 
     public  Map<String, String> getErrorsFormat(Integer year, Integer month, Integer day,
-                                                      List<List<String >> listOfListExcelData, TimeFormat timeFormat
+                                                      List<List<String >> listOfListExcelData, TimeFormat timeFormatType
     ){
 
         LocalDate initDateOfFortnight = LocalDate.of(year,month, day);
@@ -116,7 +116,7 @@ public class FileDataProcessor {
                     break;
 
 
-                if (!CellsValidator.isValidTimeRange(cellValue, timeFormat) && !CellsValidator.isValidAbsenceReasons(cellValue)) {
+                if (!CellsValidator.isValidTimeRange(cellValue, timeFormatType) && !CellsValidator.isValidAbsenceReasons(cellValue)) {
                     errorsMap.put(CellsValidator.getExcelCoordinate(i,j),
                             String.format(INVALID_VALUE_MESSAGE_ERROR,
                                     cellValue
@@ -157,18 +157,19 @@ public class FileDataProcessor {
     public static LocalDateTime parseTime(String timeString, LocalDate date, TimeFormat formatType) {
         DateTimeFormatter formatter;
 
-        if (formatType == TimeFormat.REGULAR) {
-            // Formatter for 12-hour format with am/pm
-            formatter = new DateTimeFormatterBuilder()
-                    .parseCaseInsensitive() // Ignore case (e.g., "AM" or "am")
-                    .appendPattern("[h:mma][ha]") // Handle both "7:30am" and "7am"
+        formatter = switch (formatType){
+            case REGULAR -> new DateTimeFormatterBuilder()
+                    .appendPattern("[h:mma][ha]")
                     .toFormatter(Locale.ENGLISH);
-        } else {
-            // Formatter for 24-hour format
-            formatter = new DateTimeFormatterBuilder()
+
+            case MILITARY ->  new DateTimeFormatterBuilder()
                     .appendPattern("[H:mm][H]") // Handle both "14:00" and "14"
                     .toFormatter();
-        }
+
+            case MILITARY_WITHOUT_COLON -> new DateTimeFormatterBuilder()
+                    .appendPattern("[HHmm]")
+                    .toFormatter();
+        };
 
         try {
             // Parse the time string into LocalTime
@@ -186,7 +187,10 @@ public class FileDataProcessor {
 
         Maxiaseo maxi = new Maxiaseo();
 
-        String[] times = schedule.split(" a");
+        String[] times = timeFormat == TimeFormat.MILITARY_WITHOUT_COLON
+                ? schedule.split(" A")
+                : schedule.split(" a");
+
         LocalDateTime startTime = parseTime(times[0].trim(), date, timeFormat);
         LocalDateTime endTime = parseTime(times[1].trim(), date, timeFormat);
 

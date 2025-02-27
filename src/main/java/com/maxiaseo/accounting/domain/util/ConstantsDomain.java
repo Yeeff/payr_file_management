@@ -21,6 +21,7 @@ public class ConstantsDomain {
 
     public enum TimeFormat {
         REGULAR, // 12-hour format with am/pm (e.g., "7:30am", "1:45pm")
+        MILITARY_WITHOUT_COLON,
         MILITARY // 24-hour format (e.g., "07:30", "13:45")
     }
 

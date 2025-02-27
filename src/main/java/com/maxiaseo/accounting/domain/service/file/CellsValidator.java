@@ -15,13 +15,11 @@ public class CellsValidator {
     public static boolean isValidTimeRange(String timeRange, ConstantsDomain.TimeFormat formatType) {
         String timePattern;
 
-        if (formatType == ConstantsDomain.TimeFormat.REGULAR) {
-            // Regex for 12-hour format with am/pm
-            timePattern = "^([1-9]|1[0-2])(:[0-5][0-9])?([ap]m) a ([1-9]|1[0-2])(:[0-5][0-9])?([ap]m)$";
-        } else {
-            // Regex for 24-hour format (with optional minutes)
-            timePattern = "^([01]?[0-9]|2[0-3])(:[0-5][0-9])? a ([01]?[0-9]|2[0-3])(:[0-5][0-9])?$";
-        }
+        timePattern = switch (formatType){
+            case REGULAR -> "^([1-9]|1[0-2])(:[0-5][0-9])?([ap]m) a ([1-9]|1[0-2])(:[0-5][0-9])?([ap]m)$";
+            case MILITARY -> "^([01]?[0-9]|2[0-3])(:[0-5][0-9])? a ([01]?[0-9]|2[0-3])(:[0-5][0-9])?$";
+            case MILITARY_WITHOUT_COLON -> "^(?:[01][0-9]|2[0-3])[0-5][0-9] A (?:[01][0-9]|2[0-3])[0-5][0-9]$";
+        };
 
         // Compile the regex pattern
         Pattern pattern = Pattern.compile(timePattern);
