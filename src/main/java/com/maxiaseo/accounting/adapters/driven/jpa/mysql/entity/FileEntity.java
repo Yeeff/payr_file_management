@@ -1,5 +1,6 @@
 package com.maxiaseo.accounting.adapters.driven.jpa.mysql.entity;
 
+import com.maxiaseo.accounting.domain.util.ConstantsDomain;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,6 +34,9 @@ public class FileEntity {
 
     @Column(name = "fortnight-date", nullable = false)
     private LocalDate fortNightDate;
+
+     @Enumerated(EnumType.STRING)
+    private ConstantsDomain.TimeFormat timeFormat;
 
 
 }

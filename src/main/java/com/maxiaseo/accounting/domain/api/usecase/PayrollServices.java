@@ -1,8 +1,9 @@
 package com.maxiaseo.accounting.domain.api.usecase;
 
 import com.maxiaseo.accounting.domain.api.IPayrollServicesPort;
+import com.maxiaseo.accounting.domain.exception.FileProcessingException;
+import com.maxiaseo.accounting.domain.exception.FileRetrievalException;
 import com.maxiaseo.accounting.domain.exception.IncorrectFormatExcelValuesException;
-import com.maxiaseo.accounting.domain.model.Employee;
 import com.maxiaseo.accounting.domain.model.FileModel;
 import com.maxiaseo.accounting.domain.spi.IExelManagerPort;
 import com.maxiaseo.accounting.domain.spi.IFilePersistencePort;
@@ -27,26 +28,9 @@ public class PayrollServices implements IPayrollServicesPort {
         this.filePersistence = filePersistencePort;
     }
 
-    public List<Employee> handleFileUpload( String tempFileName) throws IOException {
-
-        byte[] dataInMemory = FileAdministrator.getDataInMemoryFromTempFileByName(tempFileName);
-
-        List<List<String>> listOfListData = excelManagerAdapter.getDataFromExcelFileInMemory(dataInMemory);
-
-        LocalDate fileSavedFortNightDate = filePersistence.getFileByName(tempFileName).getFortNightDate();
-
-        List<Employee> employees = fileDataProcessor.extractEmployeeData(listOfListData,
-                fileSavedFortNightDate.getYear(), fileSavedFortNightDate.getMonthValue(), fileSavedFortNightDate.getDayOfMonth(),
-                ConstantsDomain.TimeFormat.MILITARY_WITHOUT_COLON);
-
-        dataInMemory = excelManagerAdapter.updateEmployeeDataInExcel(dataInMemory, employees );
-
-        FileAdministrator.overwriteTempFile(tempFileName, dataInMemory);
-
-        return employees;
-    }
-
     public FileModel saveFile(InputStream fis,Integer year,Integer month,Integer day) throws IOException {
+
+        ConstantsDomain.TimeFormat timeFormat = ConstantsDomain.TimeFormat.MILITARY_WITHOUT_COLON;
 
         byte[] dataInMemory = FileAdministrator.saveInMemory(fis);
 
@@ -54,7 +38,7 @@ public class PayrollServices implements IPayrollServicesPort {
 
         fileDataProcessor.resetErrorsMap();
 
-        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListData, ConstantsDomain.TimeFormat.MILITARY_WITHOUT_COLON);
+        Map<String, String> errorsMap = fileDataProcessor.getErrorsFormat(year, month, day, listOfListData, timeFormat);
 
         if( ! errorsMap.isEmpty()) {
             throw new IncorrectFormatExcelValuesException("", errorsMap );
@@ -66,11 +50,28 @@ public class PayrollServices implements IPayrollServicesPort {
         fileModelSaved.setName(fileSaved.getName());
         fileModelSaved.setUploadTime(LocalDateTime.now());
         fileModelSaved.setFortNightDate(LocalDate.of(year,month,day));
+        fileModelSaved.setTimeFormat(timeFormat.name());
 
         filePersistence.addFile(fileModelSaved);
 
         return fileModelSaved;
 
+    }
+
+    public FileModel getFileContent(String tempFileName) {
+        try {
+            byte[] dataInMemory = FileAdministrator.getDataInMemoryFromTempFileByName(tempFileName);
+            FileModel file = filePersistence.getFileByName(tempFileName);
+
+            try {
+                file.setContent(excelManagerAdapter.getDataFromExcelFileInMemory(dataInMemory));
+                return file;
+            } catch (Exception ex) {
+                throw new FileProcessingException(tempFileName);
+            }
+        } catch (IOException e) {
+            throw new FileRetrievalException(tempFileName);
+        }
     }
 
     public void saveSiigoFormat(InputStream fis) throws IOException {
@@ -89,7 +90,7 @@ public class PayrollServices implements IPayrollServicesPort {
     @Override
     public File processSiigoFormat(String tempFileName) throws IOException {
 
-        byte[] dataInMemory = FileAdministrator.getDataInMemoryFromTempFileByName(tempFileName);
+        /*byte[] dataInMemory = FileAdministrator.getDataInMemoryFromTempFileByName(tempFileName);
 
         List<List<String>> listOfListData = excelManagerAdapter.getDataFromExcelFileInMemory(dataInMemory);
 
@@ -103,7 +104,9 @@ public class PayrollServices implements IPayrollServicesPort {
 
         dataInMemory = excelManagerAdapter.populateSiigtoFormat(employees, dataInMemory);
 
-        return FileAdministrator.saveTemporaryFileFromInMemoryBytes( dataInMemory, "siigoPopulate-");
+        return FileAdministrator.saveTemporaryFileFromInMemoryBytes( dataInMemory, "siigoPopulate-");*/
+
+        return  new File("");
 
     }
 

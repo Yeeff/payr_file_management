@@ -109,7 +109,7 @@ public class ConstantsDomain {
     public static final String NOT_CORRESPONDING_QUANTITY_OF_DAYS_FOR_FORTNIGHT_MESSAGE_ERROR = "La fila %s no contiene la candidad de dias correspondiente.";
     public static final String INVALID_VALUE_MESSAGE_ERROR = "'%s' no, es un valor válido.";
 
-
-
+    public static final String PROCESSING_FILE_MESSAGE_ERROR = "Error processing file: '%s' ";
+    public static final String RETRIEVING_FILE_MESSAGE_ERROR = "Error retrieving file: '%s' ";
 
 }

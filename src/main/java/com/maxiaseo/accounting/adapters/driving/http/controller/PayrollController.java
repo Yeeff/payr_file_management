@@ -4,7 +4,6 @@ import com.maxiaseo.accounting.adapters.driving.http.dto.FileResponseDto;
 import com.maxiaseo.accounting.adapters.driving.http.mapper.ExcelMapper;
 import com.maxiaseo.accounting.adapters.driving.http.mapper.IFileResponseMapper;
 import com.maxiaseo.accounting.domain.api.IPayrollServicesPort;
-import com.maxiaseo.accounting.domain.model.Employee;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -26,20 +25,11 @@ public class PayrollController {
     private final ExcelMapper excelMapper;
     private final IFileResponseMapper fileResponseMapper;
 
-    private File tempFile; // Store reference to the temp file
+    private File tempFile;
 
-
-    @GetMapping("/processed-info/{fileName}")
-    public ResponseEntity<List<Employee>> handleFileUpload(
-            @PathVariable String fileName) throws IOException {
-
-        List<Employee>  result = payrollServices.handleFileUpload(fileName);
-
-        return ResponseEntity.ok(result);
-    }
 
     @PostMapping()
-    public ResponseEntity<Void> uploadFile(
+    public ResponseEntity<Void> saveFile(
             @RequestParam("year") Integer year,
             @RequestParam("month") Integer month,
             @RequestParam("day") Integer day,
@@ -53,21 +43,15 @@ public class PayrollController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/siigo-format")
-    public ResponseEntity<Void> saveSiigoFormat(
-            @RequestParam("file") MultipartFile file
-    ) throws IOException  {
-
-        payrollServices.saveSiigoFormat(
-                excelMapper.fileExcelToInputstream(file)
-                );
-
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
     @GetMapping()
     public ResponseEntity< List<FileResponseDto> > getSavedFiles(){
         return ResponseEntity.ok().body(fileResponseMapper.toListDto(payrollServices.getFiles()));
+    }
+
+    @GetMapping("/content/{fileName}")
+    public ResponseEntity<FileResponseDto> getContentFile(@PathVariable String fileName){
+
+        return ResponseEntity.ok( fileResponseMapper.toFileDto(payrollServices.getFileContent(fileName)) );
     }
 
     @DeleteMapping("/{fileName}")
@@ -89,6 +73,18 @@ public class PayrollController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(fileContent);
+    }
+
+    @PostMapping("/siigo-format")
+    public ResponseEntity<Void> saveSiigoFormat(
+            @RequestParam("file") MultipartFile file
+    ) throws IOException  {
+
+        payrollServices.saveSiigoFormat(
+                excelMapper.fileExcelToInputstream(file)
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/process-siigoformat")

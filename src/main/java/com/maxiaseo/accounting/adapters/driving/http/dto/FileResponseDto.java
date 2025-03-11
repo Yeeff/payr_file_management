@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,4 +19,6 @@ public class FileResponseDto {
     private LocalDateTime uploadTime;
     private String uploadedBy;
     private LocalDate fortNightDate;
+    private String timeFormat;
+    private List<List<String>> content;
 }
