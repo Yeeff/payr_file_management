@@ -4,8 +4,8 @@ import com.maxiaseo.accounting.adapters.driven.apachepoi.adapter.ExcelManagerAda
 import com.maxiaseo.accounting.adapters.driven.jpa.mysql.adapter.FilePersistenceAdapterImpl;
 import com.maxiaseo.accounting.adapters.driven.jpa.mysql.mapper.IFileEntityMapper;
 import com.maxiaseo.accounting.adapters.driven.jpa.mysql.repository.FileRepository;
-import com.maxiaseo.accounting.domain.api.IPayrollServicesPort;
-import com.maxiaseo.accounting.domain.api.usecase.PayrollServices;
+import com.maxiaseo.accounting.domain.api.IFileServicesPort;
+import com.maxiaseo.accounting.domain.api.usecase.FileServicesAdapter;
 import com.maxiaseo.accounting.domain.spi.IExelManagerPort;
 import com.maxiaseo.accounting.domain.spi.IFilePersistencePort;
 import com.maxiaseo.accounting.domain.service.file.FileDataProcessor;
@@ -31,8 +31,8 @@ public class BeanConfiguration {
     }
 
     @Bean
-    public IPayrollServicesPort getPayrollServicePort(){
-        return new PayrollServices(getExcelManagerAdapter() ,getFileDataProcessor(), getFilePersistenceAdapter());
+    public IFileServicesPort getPayrollServicePort(){
+        return new FileServicesAdapter(getExcelManagerAdapter() ,getFileDataProcessor(), getFilePersistenceAdapter());
     }
 
     @Bean

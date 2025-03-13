@@ -1,11 +1,12 @@
 package com.maxiaseo.accounting.domain.model;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.maxiaseo.accounting.domain.exception.MissingRequiredFileModelFieldException;
+import com.maxiaseo.accounting.domain.util.ConstantsDomain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 public class FileModel {
 
@@ -16,6 +17,22 @@ public class FileModel {
     private LocalDate fortNightDate;
     private String timeFormat;
     private List<List<String>> content;
+
+    public FileModel(String name, LocalDateTime uploadTime, LocalDate fortNightDate, String timeFormat) {
+
+        this.name = validateRequiredField(name, ConstantsDomain.FileFields.NAME.name());
+        this.uploadTime = validateRequiredField(uploadTime, ConstantsDomain.FileFields.UPLOAD_TIME.name());
+        this.fortNightDate = validateRequiredField(fortNightDate, ConstantsDomain.FileFields.FORTNIGHT_DATE.name());
+        this.timeFormat = validateRequiredField(timeFormat, ConstantsDomain.FileFields.TIME_FORMAT.name());
+    }
+
+    // Validation method
+    private <T> T validateRequiredField(T value, String fieldName) {
+        if (value == null) {
+            throw new MissingRequiredFileModelFieldException(fieldName );
+        }
+        return value;
+    }
 
     public String getTimeFormat() {
         return timeFormat;

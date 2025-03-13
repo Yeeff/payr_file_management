@@ -3,7 +3,7 @@ package com.maxiaseo.accounting.adapters.driving.http.controller;
 import com.maxiaseo.accounting.adapters.driving.http.dto.FileResponseDto;
 import com.maxiaseo.accounting.adapters.driving.http.mapper.ExcelMapper;
 import com.maxiaseo.accounting.adapters.driving.http.mapper.IFileResponseMapper;
-import com.maxiaseo.accounting.domain.api.IPayrollServicesPort;
+import com.maxiaseo.accounting.domain.api.IFileServicesPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ import java.io.File;
 @RequestMapping("/api/file")
 public class PayrollController {
 
-    private final IPayrollServicesPort payrollServices;
+    private final IFileServicesPort payrollServices;
     private final ExcelMapper excelMapper;
     private final IFileResponseMapper fileResponseMapper;
 

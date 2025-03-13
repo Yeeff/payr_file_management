@@ -1,8 +1,6 @@
 package com.maxiaseo.accounting.configuration.exceptionhandler;
 
-import com.maxiaseo.accounting.domain.exception.FileProcessingException;
-import com.maxiaseo.accounting.domain.exception.FileRetrievalException;
-import com.maxiaseo.accounting.domain.exception.IncorrectFormatExcelValuesException;
+import com.maxiaseo.accounting.domain.exception.*;
 import com.maxiaseo.accounting.domain.util.ConstantsDomain;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,6 +33,22 @@ public class ControllerAdvisor {
     public ResponseEntity<ExceptionResponse> handleFileProcessingException(FileProcessingException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST) // 400 for processing errors
                 .body(new ExceptionResponse(String.format(ConstantsDomain.PROCESSING_FILE_MESSAGE_ERROR, ex.getMessage()) ,
+                        HttpStatus.BAD_REQUEST.toString(),
+                        LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(FileSavingException.class)
+    public ResponseEntity<ExceptionResponse> handleFileSavingException(FileSavingException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                new ExceptionResponse(String.format(ConstantsDomain.SAVING_FILE_MESSAGE_ERROR, ex.getMessage()),
+                        HttpStatus.INTERNAL_SERVER_ERROR.toString(),
+                        LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(MissingRequiredFileModelFieldException.class)
+    public ResponseEntity<ExceptionResponse> handleMissingRequiredFileModelFieldException(MissingRequiredFileModelFieldException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionResponse(String.format(ConstantsDomain.NULL_FILE_FIELDS_MESSAGE_ERROR, ex.getMessage()),
                         HttpStatus.BAD_REQUEST.toString(),
                         LocalDateTime.now()));
     }

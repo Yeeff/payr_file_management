@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-public interface IPayrollServicesPort {
+public interface IFileServicesPort {
 
     FileModel saveFile(InputStream fis, Integer year, Integer month, Integer day) throws IOException;
 

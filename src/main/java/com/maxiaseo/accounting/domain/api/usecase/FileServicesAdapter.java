@@ -1,8 +1,9 @@
 package com.maxiaseo.accounting.domain.api.usecase;
 
-import com.maxiaseo.accounting.domain.api.IPayrollServicesPort;
+import com.maxiaseo.accounting.domain.api.IFileServicesPort;
 import com.maxiaseo.accounting.domain.exception.FileProcessingException;
 import com.maxiaseo.accounting.domain.exception.FileRetrievalException;
+import com.maxiaseo.accounting.domain.exception.FileSavingException;
 import com.maxiaseo.accounting.domain.exception.IncorrectFormatExcelValuesException;
 import com.maxiaseo.accounting.domain.model.FileModel;
 import com.maxiaseo.accounting.domain.spi.IExelManagerPort;
@@ -16,19 +17,21 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
-public class PayrollServices implements IPayrollServicesPort {
+public class FileServicesAdapter implements IFileServicesPort {
 
     private final IExelManagerPort excelManagerAdapter;
     private final FileDataProcessor fileDataProcessor;
     private final IFilePersistencePort filePersistence;
 
-    public PayrollServices(IExelManagerPort excelManagerAdapter, FileDataProcessor fileDataProcessor, IFilePersistencePort filePersistencePort) {
+    public FileServicesAdapter(IExelManagerPort excelManagerAdapter, FileDataProcessor fileDataProcessor, IFilePersistencePort filePersistencePort) {
         this.excelManagerAdapter = excelManagerAdapter;
         this.fileDataProcessor = fileDataProcessor;
         this.filePersistence = filePersistencePort;
     }
 
     public FileModel saveFile(InputStream fis,Integer year,Integer month,Integer day) throws IOException {
+        File fileSaved = null;
+        FileModel fileModelSaved = null;
 
         ConstantsDomain.TimeFormat timeFormat = ConstantsDomain.TimeFormat.MILITARY_WITHOUT_COLON;
 
@@ -44,15 +47,26 @@ public class PayrollServices implements IPayrollServicesPort {
             throw new IncorrectFormatExcelValuesException("", errorsMap );
         }
 
-        File fileSaved = FileAdministrator.saveTemporaryFileFromInMemoryBytes(dataInMemory, "uploaded-");
+        try {
+            fileSaved = FileAdministrator.saveTemporaryFileFromInMemoryBytes(dataInMemory, "uploaded-");
 
-        FileModel fileModelSaved = new FileModel();
-        fileModelSaved.setName(fileSaved.getName());
-        fileModelSaved.setUploadTime(LocalDateTime.now());
-        fileModelSaved.setFortNightDate(LocalDate.of(year,month,day));
-        fileModelSaved.setTimeFormat(timeFormat.name());
+            fileModelSaved = new FileModel(fileSaved.getName(),
+                    LocalDateTime.now(),
+                    LocalDate.of(year, month, day),
+                    timeFormat.name());
 
-        filePersistence.addFile(fileModelSaved);
+            filePersistence.addFile(fileModelSaved);
+
+        } catch (Exception e) {
+            // If an error occurs, delete the temporary file
+            if (fileSaved != null && fileSaved.exists()) {
+                fileSaved.delete();
+            }
+
+            // Re-throw the exception to ensure proper error handling
+            throw new FileSavingException( fileSaved != null ? fileSaved.getName() : "unknown", e);
+
+        }
 
         return fileModelSaved;
 
