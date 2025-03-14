@@ -5,9 +5,11 @@ import com.maxiaseo.accounting.domain.exception.FileProcessingException;
 import com.maxiaseo.accounting.domain.exception.FileRetrievalException;
 import com.maxiaseo.accounting.domain.exception.FileSavingException;
 import com.maxiaseo.accounting.domain.exception.IncorrectFormatExcelValuesException;
+import com.maxiaseo.accounting.domain.model.Employee;
 import com.maxiaseo.accounting.domain.model.FileModel;
 import com.maxiaseo.accounting.domain.spi.IExelManagerPort;
 import com.maxiaseo.accounting.domain.spi.IFilePersistencePort;
+import com.maxiaseo.accounting.domain.spi.IPayrollClientPort;
 import com.maxiaseo.accounting.domain.util.ConstantsDomain;
 import com.maxiaseo.accounting.domain.service.file.FileAdministrator;
 import com.maxiaseo.accounting.domain.service.file.FileDataProcessor;
@@ -22,11 +24,17 @@ public class FileServicesAdapter implements IFileServicesPort {
     private final IExelManagerPort excelManagerAdapter;
     private final FileDataProcessor fileDataProcessor;
     private final IFilePersistencePort filePersistence;
+    private final IPayrollClientPort payrollClientPort;
 
-    public FileServicesAdapter(IExelManagerPort excelManagerAdapter, FileDataProcessor fileDataProcessor, IFilePersistencePort filePersistencePort) {
+    public FileServicesAdapter(IExelManagerPort excelManagerAdapter,
+                               FileDataProcessor fileDataProcessor,
+                               IFilePersistencePort filePersistencePort,
+                               IPayrollClientPort payrollClientPort
+    ) {
         this.excelManagerAdapter = excelManagerAdapter;
         this.fileDataProcessor = fileDataProcessor;
         this.filePersistence = filePersistencePort;
+        this.payrollClientPort = payrollClientPort;
     }
 
     public FileModel saveFile(InputStream fis,Integer year,Integer month,Integer day) throws IOException {
@@ -130,8 +138,25 @@ public class FileServicesAdapter implements IFileServicesPort {
     }
 
     @Override
-    public byte[] getTempFile(String fileName) throws IOException {
-        return FileAdministrator.getDataInMemoryFromTempFileByName(fileName);
+    public byte[] downloadFileByname(String tempFileName) throws IOException {
+
+        byte[] dataInMemory = FileAdministrator.getDataInMemoryFromTempFileByName(tempFileName);
+        FileModel file = filePersistence.getFileByName(tempFileName);
+
+        List<List<String>> listOfListData = excelManagerAdapter.getDataFromExcelFileInMemory(dataInMemory);
+        LocalDate fortNightDate = file.getFortNightDate();
+
+        FileModel fileModelSaved = new FileModel(file.getName(),
+                LocalDateTime.now(),
+                LocalDate.of(fortNightDate.getYear(), fortNightDate.getMonth(), fortNightDate.getDayOfMonth()),
+                file.getTimeFormat());
+        fileModelSaved.setContent(listOfListData);
+
+        List<Employee> employees = payrollClientPort.extractPayrollDataFromSchedules(fileModelSaved);
+
+        dataInMemory = excelManagerAdapter.updateEmployeeDataInExcel(dataInMemory, employees );
+
+        return dataInMemory;
     }
 
 

@@ -61,9 +61,9 @@ public class PayrollController {
     }
 
     @GetMapping("/download/{fileName}")
-    public ResponseEntity<byte[]> downloadFile(@PathVariable String fileName) throws IOException {
+    public ResponseEntity<byte[]> downloadFileByname(@PathVariable String fileName) throws IOException {
 
-        byte[] fileContent = payrollServices.getTempFile(fileName);
+        byte[] fileContent = payrollServices.downloadFileByname(fileName);
 
         // Set response headers
         HttpHeaders headers = new HttpHeaders();
@@ -99,7 +99,7 @@ public class PayrollController {
 
         File siigoFile = payrollServices.processSiigoFormat(fileName);
 
-        byte[] fileContent = payrollServices.getTempFile(siigoFile.getName());
+        byte[] fileContent = payrollServices.downloadFileByname(siigoFile.getName());
 
         // Set response headers
         HttpHeaders headers = new HttpHeaders();

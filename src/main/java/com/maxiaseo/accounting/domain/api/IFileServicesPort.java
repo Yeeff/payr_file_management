@@ -21,6 +21,6 @@ public interface IFileServicesPort {
 
     FileModel getFileContent(String tempFileName);
 
-    byte[] getTempFile(String fileName) throws IOException;
+    byte[] downloadFileByname(String fileName) throws IOException;
 
 }
