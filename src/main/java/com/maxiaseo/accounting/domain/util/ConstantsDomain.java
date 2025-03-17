@@ -1,6 +1,9 @@
 package com.maxiaseo.accounting.domain.util;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Set;
 
 public class ConstantsDomain {
@@ -55,6 +58,16 @@ public class ConstantsDomain {
         LM,
         X
     }
+
+    public  enum FileFields{
+        NAME,
+        UPLOAD_TIME,
+        UPLOADED_BY,
+        FORTNIGHT_DATE,
+        TIME_FORMAT,
+        CONTENT,
+    }
+
     public static final Set<String> VALID_CODES = Set.of(
             AbsenceReasonsEnum.INC_ARL.toString(),
             AbsenceReasonsEnum.INC.toString(),
@@ -70,6 +83,7 @@ public class ConstantsDomain {
             AbsenceReasonsEnum.LM.toString(),
             AbsenceReasonsEnum.X.toString()
             );
+
 
     public static final Integer FIRST_DAY_OF_FIRST_FORTNIGHT = 1;
     public static final Integer FIRST_DAY_OF_SECOND_FORTNIGHT = 16;
@@ -109,7 +123,9 @@ public class ConstantsDomain {
     public static final String NOT_CORRESPONDING_QUANTITY_OF_DAYS_FOR_FORTNIGHT_MESSAGE_ERROR = "La fila %s no contiene la candidad de dias correspondiente.";
     public static final String INVALID_VALUE_MESSAGE_ERROR = "'%s' no, es un valor válido.";
 
-
-
+    public static final String PROCESSING_FILE_MESSAGE_ERROR = "Error processing file: '%s' ";
+    public static final String RETRIEVING_FILE_MESSAGE_ERROR = "Error retrieving file: '%s' ";
+    public static final String SAVING_FILE_MESSAGE_ERROR = "Error saving file: '%s' ";
+    public static final String NULL_FILE_FIELDS_MESSAGE_ERROR = "'%s' is required and cannot be null.";
 
 }

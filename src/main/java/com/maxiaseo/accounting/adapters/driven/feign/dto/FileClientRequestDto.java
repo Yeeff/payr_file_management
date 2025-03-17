@@ -1,4 +1,4 @@
-package com.maxiaseo.accounting.adapters.driving.http.dto;
+package com.maxiaseo.accounting.adapters.driven.feign.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Setter
 @Getter
-public class FileResponseDto {
+public class FileClientRequestDto {
     private Long id;
     private String name;
     private LocalDateTime uploadTime;

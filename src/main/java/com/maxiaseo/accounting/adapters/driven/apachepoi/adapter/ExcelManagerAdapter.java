@@ -272,7 +272,7 @@ public class ExcelManagerAdapter implements IExelManagerPort {
             case BOOLEAN:
                 return String.valueOf(cell.getBooleanCellValue());
             case FORMULA:
-                return String.valueOf(cell.getNumericCellValue());
+                return cell.getCellFormula();
             default:
                 return "";
         }
