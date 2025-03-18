@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name = "payroll-services", url = "http://localhost:8092/api/payroll")
+@FeignClient(name = "payroll-services", url = "${payroll-services.url}")
 public interface IPayrollClientServices {
 
     @PostMapping("/process")
