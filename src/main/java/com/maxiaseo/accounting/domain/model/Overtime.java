@@ -20,19 +20,6 @@ public class Overtime {
         this.quantityOfMinutes = quantityOfMinutes;
     }
 
-
-    public void increasValueOfStep(){
-        quantityOfMinutes += ConstantsDomain.STEP_IN_MINUTES;
-    }
-
-    public LocalDateTime getStart() {
-        return start;
-    }
-
-    public LocalDateTime getEnd() {
-        return end;
-    }
-
     public Long getQuantityOfMinutes() {
         return quantityOfMinutes;
     }
@@ -41,19 +28,5 @@ public class Overtime {
         return overtimeTypeEnum;
     }
 
-    public void setStart(LocalDateTime start) {
-        this.start = start;
-    }
 
-    public void setEnd(LocalDateTime end) {
-        this.end = end;
-    }
-
-    public void setQuantityOfMinutes(Long quantityOfMinutes) {
-        this.quantityOfMinutes = quantityOfMinutes;
-    }
-
-    public void setOvertimeTypeEnum(ConstantsDomain.OvertimeTypeEnum overtimeTypeEnum) {
-        this.overtimeTypeEnum = overtimeTypeEnum;
-    }
 }
