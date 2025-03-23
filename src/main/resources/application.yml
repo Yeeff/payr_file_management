@@ -2,8 +2,7 @@ server:
   port: 8090
 
 payroll-services:
-    #url: https://maxi-api-payroll-1034515474137.us-central1.run.app/api/payroll
-    url:  http://localhost:8092/api/payroll
+    url: ${PAYROLL_API_URL:http://localhost:8092}
 
 spring:
   datasource:
