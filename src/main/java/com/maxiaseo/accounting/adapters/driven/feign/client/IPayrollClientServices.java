@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name = "payroll-services", url = "https://maxi-api-payroll-1034515474137.us-central1.run.app")
+@FeignClient(name = "payroll-services", url = "https://maxi-api-payroll-1034515474137.us-central1.run.app/api/payroll")
 public interface IPayrollClientServices {
 
     @PostMapping("/process")
