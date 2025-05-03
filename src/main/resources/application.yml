@@ -1,11 +1,14 @@
+
 server:
   port: 8090
 
 payroll-services:
-    #url: ${PAYROLL_API_URL:http://localhost:8092}
-    url: https://maxi-api-payroll-1034515474137.us-central1.run.app
+    url: ${PAYROLL_API_URL:http://localhost:8092}
+    #url: https://maxi-api-payroll-1034515474137.us-central1.run.app
 
 spring:
+  application:
+    name: file_services
   datasource:
     url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?allowPublicKeyRetrieval=true&useSSL=true
     username: ${DB_USER}
