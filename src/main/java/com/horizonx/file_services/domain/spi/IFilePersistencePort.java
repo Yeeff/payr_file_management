@@ -14,4 +14,6 @@ public interface IFilePersistencePort {
     void deleteFile(String tempFileName);
 
     FileModel getFileByName(String name);
+
+    FileModel getFileByNameByFormId(Integer formId);
 }

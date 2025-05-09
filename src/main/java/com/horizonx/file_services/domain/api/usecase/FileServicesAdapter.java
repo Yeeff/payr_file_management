@@ -13,6 +13,7 @@ import com.horizonx.file_services.domain.spi.IPayrollClientPort;
 import com.horizonx.file_services.domain.util.ConstantsDomain;
 import com.horizonx.file_services.domain.service.file.FileAdministrator;
 import com.horizonx.file_services.domain.service.file.FileDataProcessor;
+import jakarta.persistence.criteria.CriteriaBuilder;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ public class FileServicesAdapter implements IFileServicesPort {
         this.payrollClientPort = payrollClientPort;
     }
 
-    public FileModel saveFile(InputStream fis,Integer year,Integer month,Integer day) throws IOException {
+    public FileModel saveFile(InputStream fis, Integer year, Integer month, Integer day, Integer formId) throws IOException {
         File fileSaved = null;
         FileModel fileModelSaved = null;
 
@@ -61,7 +62,9 @@ public class FileServicesAdapter implements IFileServicesPort {
             fileModelSaved = new FileModel(fileSaved.getName(),
                     LocalDateTime.now(),
                     LocalDate.of(year, month, day),
-                    timeFormat.name());
+                    timeFormat.name(),
+                    formId
+            );
 
             filePersistence.addFile(fileModelSaved);
 
@@ -93,6 +96,23 @@ public class FileServicesAdapter implements IFileServicesPort {
             }
         } catch (IOException e) {
             throw new FileRetrievalException(tempFileName);
+        }
+    }
+
+    @Override
+    public FileModel getFileContentByFormId(Integer formId) {
+        try {
+            FileModel file = filePersistence.getFileByNameByFormId(formId);
+            byte[] dataInMemory = FileAdministrator.getDataInMemoryFromTempFileByName(file.getName());
+
+            try {
+                file.setContent(excelManagerAdapter.getDataFromExcelFileInMemory(dataInMemory));
+                return file;
+            } catch (Exception ex) {
+                throw new FileProcessingException(file.getName());
+            }
+        } catch (IOException e) {
+            throw new FileRetrievalException(formId.toString());
         }
     }
 
@@ -149,7 +169,9 @@ public class FileServicesAdapter implements IFileServicesPort {
         FileModel fileModelSaved = new FileModel(file.getName(),
                 LocalDateTime.now(),
                 LocalDate.of(fortNightDate.getYear(), fortNightDate.getMonth(), fortNightDate.getDayOfMonth()),
-                file.getTimeFormat());
+                file.getTimeFormat(),
+                file.getFormId()
+                );
         fileModelSaved.setContent(listOfListData);
 
         List<Employee> employees = payrollClientPort.extractPayrollDataFromSchedules(fileModelSaved);
@@ -158,8 +180,5 @@ public class FileServicesAdapter implements IFileServicesPort {
 
         return dataInMemory;
     }
-
-
-
 
 }

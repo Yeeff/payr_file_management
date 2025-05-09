@@ -38,5 +38,8 @@ public class FileEntity {
      @Enumerated(EnumType.STRING)
     private ConstantsDomain.TimeFormat timeFormat;
 
+    @Column(name = "form_id")
+    private Integer formId;
+
 
 }

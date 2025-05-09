@@ -1,6 +1,7 @@
 package com.horizonx.file_services.domain.api;
 
 import com.horizonx.file_services.domain.model.FileModel;
+import jakarta.persistence.criteria.CriteriaBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +10,7 @@ import java.util.List;
 
 public interface IFileServicesPort {
 
-    FileModel saveFile(InputStream fis, Integer year, Integer month, Integer day) throws IOException;
+    FileModel saveFile(InputStream fis, Integer year, Integer month, Integer day, Integer formId) throws IOException;
 
     void saveSiigoFormat(InputStream fis) throws IOException;
 
@@ -23,4 +24,5 @@ public interface IFileServicesPort {
 
     byte[] downloadFileByname(String fileName) throws IOException;
 
+    FileModel getFileContentByFormId(Integer formId);
 }

@@ -21,4 +21,5 @@ public class FileResponseDto {
     private LocalDate fortNightDate;
     private String timeFormat;
     private List<List<String>> content;
+    private Integer formId;
 }

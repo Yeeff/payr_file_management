@@ -16,14 +16,16 @@ public class FileModel {
     private String uploadedBy;
     private LocalDate fortNightDate;
     private String timeFormat;
+    private Integer formId;
     private List<List<String>> content;
 
-    public FileModel(String name, LocalDateTime uploadTime, LocalDate fortNightDate, String timeFormat) {
+    public FileModel(String name, LocalDateTime uploadTime, LocalDate fortNightDate, String timeFormat, Integer formId) {
 
         this.name = validateRequiredField(name, ConstantsDomain.FileFields.NAME.name());
         this.uploadTime = validateRequiredField(uploadTime, ConstantsDomain.FileFields.UPLOAD_TIME.name());
         this.fortNightDate = validateRequiredField(fortNightDate, ConstantsDomain.FileFields.FORTNIGHT_DATE.name());
         this.timeFormat = validateRequiredField(timeFormat, ConstantsDomain.FileFields.TIME_FORMAT.name());
+        this.formId = formId;
     }
 
     // Validation method
@@ -32,6 +34,14 @@ public class FileModel {
             throw new MissingRequiredFileModelFieldException(fieldName );
         }
         return value;
+    }
+
+    public Integer getFormId() {
+        return formId;
+    }
+
+    public void setFormId(Integer formId) {
+        this.formId = formId;
     }
 
     public String getTimeFormat() {

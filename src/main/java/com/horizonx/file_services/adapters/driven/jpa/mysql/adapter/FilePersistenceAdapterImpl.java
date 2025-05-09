@@ -40,5 +40,11 @@ public class FilePersistenceAdapterImpl implements IFilePersistencePort {
         return fileMapper.toModel(fileEntity);
     }
 
+    @Override
+    public FileModel getFileByNameByFormId(Integer formId) {
+        FileEntity fileEntity = fileRepo.findByFormId(formId).orElseThrow(ElementNotFoundException::new);
+        return fileMapper.toModel(fileEntity);
+    }
+
 
 }
