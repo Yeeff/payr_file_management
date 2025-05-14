@@ -10,5 +10,9 @@ COPY build/libs/accounting-0.0.1-SNAPSHOT.jar app.jar
 # Expose the application port (default Spring Boot port)
 EXPOSE 8090
 
+# Use profile from build arg
+ARG SPRING_PROFILE
+ENV SPRING_PROFILE=${SPRING_PROFILE}
+
 # Command to run the application
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java","-jar","app.jar", "--spring.profiles.active=${SPRING_PROFILE}"]
