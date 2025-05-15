@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the JAR file into the container (source and destination are specified)
-COPY build/libs/accounting-0.0.1-SNAPSHOT.jar app.jar
+COPY build/libs/file_services-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose the application port (default Spring Boot port)
 EXPOSE 8090
