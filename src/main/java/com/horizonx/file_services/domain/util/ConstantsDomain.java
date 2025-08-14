@@ -38,11 +38,12 @@ public class ConstantsDomain {
 
     public enum SurchargeTypeEnum {
         NIGHT,
+        OVERTIME_HOLIDAY,
         HOLIDAY,
         NIGHT_HOLIDAY,
+        OVERTIME_NIGHT_HOLIDAY,
         DAY
     }
-
     public enum AbsenceReasonsEnum {
         INC_ARL,        //INCAPACIDAD_ARL
         INC,            //INCAPACIDAD_CON_SOPORTE,
