@@ -1,5 +1,6 @@
 package com.horizonx.file_services.adapters.driving.http.controller;
 
+import com.horizonx.file_services.adapters.driving.http.dto.EmployeeOvertimeRequestDto;
 import com.horizonx.file_services.adapters.driving.http.dto.FileResponseDto;
 import com.horizonx.file_services.adapters.driving.http.mapper.ExcelMapper;
 import com.horizonx.file_services.adapters.driving.http.mapper.IFileResponseMapper;
@@ -109,6 +110,12 @@ public class PayrollController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(fileContent);
+    }
+
+    @PostMapping("/employee-overtime")
+    public ResponseEntity<String> createEmployeeOvertimeReport(@RequestBody EmployeeOvertimeRequestDto request) throws IOException {
+        String cacheKey = payrollServices.createEmployeeOvertimeReport(request.getEmployees());
+        return ResponseEntity.ok(cacheKey);
     }
 
 }

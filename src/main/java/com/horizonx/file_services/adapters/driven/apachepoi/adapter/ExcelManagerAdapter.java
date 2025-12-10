@@ -1,5 +1,6 @@
 package com.horizonx.file_services.adapters.driven.apachepoi.adapter;
 
+import com.horizonx.file_services.adapters.driving.http.dto.EmployeeOvertimeDto;
 import com.horizonx.file_services.configuration.Constants;
 import com.horizonx.file_services.domain.model.*;
 import com.horizonx.file_services.domain.spi.IExelManagerPort;
@@ -276,5 +277,53 @@ public class ExcelManagerAdapter implements IExelManagerPort {
             default:
                 return "";
         }
+    }
+
+    public byte[] createEmployeeOvertimeExcel(List<EmployeeOvertimeDto> employees) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Employee Overtime Report");
+
+        // Create header row
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {
+            "ID", "Name", "Total Surcharge Hours Night", "Total Surcharge Hours Holiday",
+            "Total Surcharge Hours Night Holiday", "Total Overtime Surcharge Hours Night Holiday",
+            "Total Overtime Surcharge Hours Holiday", "Total Overtime Hours Day",
+            "Total Overtime Hours Night", "Total Overtime Hours Holiday", "Total Overtime Hours Night Holiday"
+        };
+
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+        }
+
+        // Create data rows
+        int rowNum = 1;
+        for (EmployeeOvertimeDto employee : employees) {
+            Row row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(employee.getId());
+            row.createCell(1).setCellValue(employee.getName());
+            row.createCell(2).setCellValue(employee.getTotalSurchargeHoursNight());
+            row.createCell(3).setCellValue(employee.getTotalSurchargeHoursHoliday());
+            row.createCell(4).setCellValue(employee.getTotalSurchargeHoursNightHoliday());
+            row.createCell(5).setCellValue(employee.getTotalOvertimeSurchargeHoursNightHoliday());
+            row.createCell(6).setCellValue(employee.getTotalOvertimeSurchargeHoursHoliday());
+            row.createCell(7).setCellValue(employee.getTotalOvertimeHoursDay());
+            row.createCell(8).setCellValue(employee.getTotalOvertimeHoursNight());
+            row.createCell(9).setCellValue(employee.getTotalOvertimeHoursHoliday());
+            row.createCell(10).setCellValue(employee.getTotalOvertimeHoursNightHoliday());
+        }
+
+        // Auto-size columns
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // Write to byte array
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+
+        return outputStream.toByteArray();
     }
 }

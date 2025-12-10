@@ -1,5 +1,6 @@
 package com.horizonx.file_services.domain.api;
 
+import com.horizonx.file_services.adapters.driving.http.dto.EmployeeOvertimeDto;
 import com.horizonx.file_services.domain.model.FileModel;
 
 import java.io.File;
@@ -22,5 +23,7 @@ public interface IFileServicesPort {
     FileModel getFileContent(String tempFileName);
 
     byte[] downloadFileByname(String fileName) throws IOException;
+
+    String createEmployeeOvertimeReport(List<EmployeeOvertimeDto> employees) throws IOException;
 
 }
