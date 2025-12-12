@@ -61,10 +61,26 @@ public class PayrollController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+
     @GetMapping("/download/{fileName}")
     public ResponseEntity<byte[]> downloadFileByname(@PathVariable String fileName) throws IOException {
 
         byte[] fileContent = payrollServices.downloadFileByname(fileName);
+
+        // Set response headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", fileName);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(fileContent);
+    }
+
+    @GetMapping("/download-file/{fileName}")
+    public ResponseEntity<byte[]> downloadRawFile(@PathVariable String fileName) throws IOException {
+
+        byte[] fileContent = payrollServices.downloadRawFileByName(fileName);
 
         // Set response headers
         HttpHeaders headers = new HttpHeaders();

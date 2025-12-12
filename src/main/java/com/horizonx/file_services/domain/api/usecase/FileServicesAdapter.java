@@ -161,6 +161,11 @@ public class FileServicesAdapter implements IFileServicesPort {
     }
 
     @Override
+    public byte[] downloadRawFileByName(String tempFileName) throws IOException {
+        return FileAdministrator.getDataInMemoryFromTempFileByName(tempFileName);
+    }
+
+    @Override
     public String createEmployeeOvertimeReport(List<EmployeeOvertimeDto> employees) throws IOException {
         byte[] excelData = excelManagerAdapter.createEmployeeOvertimeExcel(employees);
         File tempFile = FileAdministrator.saveTemporaryFileFromInMemoryBytes(excelData, "employee-overtime-");

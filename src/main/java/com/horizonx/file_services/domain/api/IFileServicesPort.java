@@ -24,6 +24,8 @@ public interface IFileServicesPort {
 
     byte[] downloadFileByname(String fileName) throws IOException;
 
+    byte[] downloadRawFileByName(String fileName) throws IOException;
+
     String createEmployeeOvertimeReport(List<EmployeeOvertimeDto> employees) throws IOException;
 
 }

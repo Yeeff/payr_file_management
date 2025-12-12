@@ -286,10 +286,10 @@ public class ExcelManagerAdapter implements IExelManagerPort {
         // Create header row
         Row headerRow = sheet.createRow(0);
         String[] headers = {
-            "ID", "Name", "Total Surcharge Hours Night", "Total Surcharge Hours Holiday",
-            "Total Surcharge Hours Night Holiday", "Total Overtime Surcharge Hours Night Holiday",
-            "Total Overtime Surcharge Hours Holiday", "Total Overtime Hours Day",
-            "Total Overtime Hours Night", "Total Overtime Hours Holiday", "Total Overtime Hours Night Holiday"
+                "ID", "Name", "Total Surcharge Hours Night", "Total Surcharge Hours Holiday",
+                "Total Surcharge Hours Night Holiday", "Total Overtime Surcharge Hours Night Holiday",
+                "Total Overtime Surcharge Hours Holiday", "Total Overtime Hours Day",
+                "Total Overtime Hours Night", "Total Overtime Hours Holiday", "Total Overtime Hours Night Holiday"
         };
 
         for (int i = 0; i < headers.length; i++) {
