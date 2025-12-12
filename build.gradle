@@ -38,6 +38,8 @@ dependencies {
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+	implementation 'com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.17.1'
+
 }
 
 dependencyManagement {
