@@ -1,6 +1,6 @@
 
 server:
-  port: 8090
+  port: ${PORT:8090}
 
 payroll-services:
     url: ${PAYROLL_API_URL:http://localhost:8092}
