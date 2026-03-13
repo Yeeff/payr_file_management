@@ -34,12 +34,13 @@ public class PayrollController {
             @RequestParam("year") Integer year,
             @RequestParam("month") Integer month,
             @RequestParam("day") Integer day,
+            @RequestParam("formId") Integer formId,
             @RequestParam("file") MultipartFile file
     ) throws IOException  {
 
         payrollServices.saveFile(
                 excelMapper.fileExcelToInputstream(file)
-                ,year, month, day);
+                ,year, month, day, formId);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -53,6 +54,12 @@ public class PayrollController {
     public ResponseEntity<FileResponseDto> getContentFile(@PathVariable String fileName){
 
         return ResponseEntity.ok( fileResponseMapper.toFileDto(payrollServices.getFileContent(fileName)) );
+    }
+
+    @GetMapping("/content-by-formId/{formId}")
+    public ResponseEntity<FileResponseDto> getContentFileByFormId(@PathVariable Integer formId){
+
+        return ResponseEntity.ok( fileResponseMapper.toFileDto(payrollServices.getFileContentByFormId(formId)) );
     }
 
     @DeleteMapping("/{fileName}")

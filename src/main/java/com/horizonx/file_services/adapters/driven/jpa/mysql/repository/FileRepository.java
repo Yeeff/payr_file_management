@@ -10,4 +10,6 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
     void deleteByName(String name);
 
     Optional<FileEntity> findByName(String name);
+
+    Optional<FileEntity> findByFormId(Integer id);
 }
