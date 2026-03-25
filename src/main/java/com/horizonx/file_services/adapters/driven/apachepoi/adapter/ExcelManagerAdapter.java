@@ -129,63 +129,6 @@ public class ExcelManagerAdapter implements IExelManagerPort {
         return result;
     }
 
-    public byte[] populateSiigtoFormat(List<Employee> employees,  byte[] siigoFormat) throws IOException {
-
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(siigoFormat);
-        Workbook workbook = new XSSFWorkbook(inputStream);
-        Sheet sheet = workbook.getSheetAt(0);
-
-
-        int rowIndex = 5;
-
-        // Iterate through employees and generate rows
-        for (Employee employee : employees) {
-            // Add surcharge records
-            for (Surcharge surcharge : employee.getSurcharges()) {
-                Row row = sheet.createRow(rowIndex++);
-                row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID).setCellValue(employee.getId());
-                row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getSurchargeDescription(surcharge));
-                row.createCell(INDEX_EMPLOYEE_NEW_QUANTITY).setCellValue(surcharge.getQuantityOfMinutes() );
-
-            }
-
-            // Add overtime records
-            for (Overtime overtime : employee.getOvertimes()) {
-                Row row = sheet.createRow(rowIndex++);
-                row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID   ).setCellValue(employee.getId());
-                row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getOvertimeDescription(overtime));
-                row.createCell(INDEX_EMPLOYEE_NEW_QUANTITY).setCellValue(overtime.getQuantityOfMinutes() );
-            }
-
-            // Add overtime surcharge records
-            for (OvertimeSurcharge overtimeSurcharge : employee.getOvertimeSurcharges()) {
-                Row row = sheet.createRow(rowIndex++);
-                row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID).setCellValue(employee.getId());
-                row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getOvertimeSurchargeDescription(overtimeSurcharge));
-                row.createCell(INDEX_EMPLOYEE_NEW_QUANTITY).setCellValue(overtimeSurcharge.getQuantityOfMinutes() );
-            }
-
-            // Add absenteeism reason records
-            for (AbsenteeismReason absenteeismReason : employee.getAbsenteeismReasons()) {
-                Row row = sheet.createRow(rowIndex++);
-                row.createCell(INDEX_EMPLOYEE_DOCUMENT_ID).setCellValue(employee.getId());
-                row.createCell(INDEX_EMPLOYEE_NEW).setCellValue(getAbsenteeismReasonDescription(absenteeismReason));
-                row.createCell(INDEX_EMPLOYEE_NEW_QUANTITY).setCellValue(absenteeismReason.getQuantityOfHours() );
-            }
-        }
-
-        // Adjust column width
-        sheet.autoSizeColumn(INDEX_EMPLOYEE_DOCUMENT_ID);
-        sheet.autoSizeColumn(INDEX_EMPLOYEE_NEW);
-
-        // Write workbook to a byte array
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        workbook.write(outputStream);
-        workbook.close();
-
-        return outputStream.toByteArray();
-    }
-
     // Helper methods to generate descriptions
     private String getSurchargeDescription(Surcharge surcharge) {
         switch (surcharge.getSurchargeTypeEnum()) {

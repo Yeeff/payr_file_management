@@ -38,11 +38,12 @@ public class ConstantsDomain {
 
     public enum SurchargeTypeEnum {
         NIGHT,
+        OVERTIME_HOLIDAY,
         HOLIDAY,
         NIGHT_HOLIDAY,
+        OVERTIME_NIGHT_HOLIDAY,
         DAY
     }
-
     public enum AbsenceReasonsEnum {
         INC_ARL,        //INCAPACIDAD_ARL
         INC,            //INCAPACIDAD_CON_SOPORTE,
@@ -53,6 +54,8 @@ public class ConstantsDomain {
         EPS,            //COLABORADOR_EN_EPS,
         RET,            //RETIRO
         DESC,            //DESCANSO
+        SUS,             //SUSPENSION
+        DLF,             //FAMILY DAY
         INC_FONDO,
         VAC,
         LM,
@@ -78,6 +81,8 @@ public class ConstantsDomain {
             AbsenceReasonsEnum.EPS.toString(),
             AbsenceReasonsEnum.RET.toString(),
             AbsenceReasonsEnum.DESC.toString(),
+            AbsenceReasonsEnum.SUS.toString(),
+            AbsenceReasonsEnum.DLF.toString(),
             AbsenceReasonsEnum.INC_FONDO.toString(),
             AbsenceReasonsEnum.VAC.toString(),
             AbsenceReasonsEnum.LM.toString(),
