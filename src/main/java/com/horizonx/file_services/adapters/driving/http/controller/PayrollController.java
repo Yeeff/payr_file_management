@@ -84,7 +84,7 @@ public class PayrollController {
                 .body(fileContent);
     }
 
-    /*@GetMapping("/download-file/{fileName}")
+    @GetMapping("/download-file/{fileName}")
     public ResponseEntity<byte[]> downloadRawFile(@PathVariable String fileName) throws IOException {
 
         byte[] fileContent = payrollServices.downloadRawFileByName(fileName);
@@ -97,7 +97,7 @@ public class PayrollController {
         return ResponseEntity.ok()
                 .headers(headers)
                 .body(fileContent);
-    }*/
+    }
 
     @PostMapping("/siigo-format")
     public ResponseEntity<Void> saveSiigoFormat(
@@ -135,10 +135,10 @@ public class PayrollController {
                 .body(fileContent);
     }
 
-    /*@PostMapping("/employee-overtime")
+    @PostMapping("/employee-overtime")
     public ResponseEntity<String> createEmployeeOvertimeReport(@RequestBody EmployeeOvertimeRequestDto request) throws IOException {
         String cacheKey = payrollServices.createEmployeeOvertimeReport(request.getEmployees());
         return ResponseEntity.ok(cacheKey);
     }
-   */
+
 }

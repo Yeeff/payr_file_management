@@ -1,5 +1,6 @@
 package com.horizonx.file_services.domain.api.usecase;
 
+import com.horizonx.file_services.adapters.driving.http.dto.EmployeeOvertimeDto;
 import com.horizonx.file_services.domain.api.IFileServicesPort;
 import com.horizonx.file_services.domain.exception.FileProcessingException;
 import com.horizonx.file_services.domain.exception.FileRetrievalException;
@@ -180,5 +181,18 @@ public class FileServicesAdapter implements IFileServicesPort {
 
         return dataInMemory;
     }
+
+    @Override
+    public byte[] downloadRawFileByName(String tempFileName) throws IOException {
+        return FileAdministrator.getDataInMemoryFromTempFileByName(tempFileName);
+    }
+
+    @Override
+    public String createEmployeeOvertimeReport(List<EmployeeOvertimeDto> employees) throws IOException {
+        byte[] excelData = excelManagerAdapter.createEmployeeOvertimeExcel(employees);
+        File tempFile = FileAdministrator.saveTemporaryFileFromInMemoryBytes(excelData, "employee-overtime-");
+        return tempFile.getName();
+    }
+
 
 }

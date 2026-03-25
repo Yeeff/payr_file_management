@@ -229,10 +229,8 @@ public class ExcelManagerAdapter implements IExelManagerPort {
         // Create header row
         Row headerRow = sheet.createRow(0);
         String[] headers = {
-                "ID", "Name", "Total Surcharge Hours Night", "Total Surcharge Hours Holiday",
-                "Total Surcharge Hours Night Holiday", "Total Overtime Surcharge Hours Night Holiday",
-                "Total Overtime Surcharge Hours Holiday", "Total Overtime Hours Day",
-                "Total Overtime Hours Night", "Total Overtime Hours Holiday", "Total Overtime Hours Night Holiday"
+                "ID", "Nombre", "HRN", "HRF", "HRFN",
+                 "HXD", "HXN", "HXF", "HXFN", "HXRF", "HXRNF"
         };
 
         for (int i = 0; i < headers.length; i++) {
@@ -249,12 +247,14 @@ public class ExcelManagerAdapter implements IExelManagerPort {
             row.createCell(2).setCellValue(employee.getTotalSurchargeHoursNight());
             row.createCell(3).setCellValue(employee.getTotalSurchargeHoursHoliday());
             row.createCell(4).setCellValue(employee.getTotalSurchargeHoursNightHoliday());
-            row.createCell(5).setCellValue(employee.getTotalOvertimeSurchargeHoursNightHoliday());
-            row.createCell(6).setCellValue(employee.getTotalOvertimeSurchargeHoursHoliday());
-            row.createCell(7).setCellValue(employee.getTotalOvertimeHoursDay());
-            row.createCell(8).setCellValue(employee.getTotalOvertimeHoursNight());
-            row.createCell(9).setCellValue(employee.getTotalOvertimeHoursHoliday());
-            row.createCell(10).setCellValue(employee.getTotalOvertimeHoursNightHoliday());
+
+            row.createCell(5).setCellValue(employee.getTotalOvertimeHoursDay());
+            row.createCell(6).setCellValue(employee.getTotalOvertimeHoursNight());
+            row.createCell(7).setCellValue(employee.getTotalOvertimeHoursHoliday());
+            row.createCell(8).setCellValue(employee.getTotalOvertimeHoursNightHoliday());
+
+            row.createCell(9).setCellValue(employee.getTotalOvertimeSurchargeHoursHoliday());
+            row.createCell(10).setCellValue(employee.getTotalOvertimeSurchargeHoursNightHoliday());
         }
 
         // Auto-size columns

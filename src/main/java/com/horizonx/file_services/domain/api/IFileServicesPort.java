@@ -1,5 +1,6 @@
 package com.horizonx.file_services.domain.api;
 
+import com.horizonx.file_services.adapters.driving.http.dto.EmployeeOvertimeDto;
 import com.horizonx.file_services.domain.model.FileModel;
 import jakarta.persistence.criteria.CriteriaBuilder;
 
@@ -25,4 +26,9 @@ public interface IFileServicesPort {
     byte[] downloadFileByname(String fileName) throws IOException;
 
     FileModel getFileContentByFormId(Integer formId);
+
+    byte[] downloadRawFileByName(String fileName) throws IOException;
+
+    String createEmployeeOvertimeReport(List<EmployeeOvertimeDto> employees) throws IOException;
+
 }
